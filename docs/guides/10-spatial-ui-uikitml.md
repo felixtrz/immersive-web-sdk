@@ -59,16 +59,14 @@ IWSDK includes a Vite plugin that compiles UIKitML files:
 ```typescript
 // vite.config.js
 import { defineConfig } from 'vite';
-import { uikitml } from '@iwsdk/vite-plugin-uikitml';
+import { compileUIKit } from '@iwsdk/vite-plugin-uikitml';
 
 export default defineConfig({
   plugins: [
-    uikitml({
-      // File extensions to process
-      include: ['**/*.uikitml'],
-
-      // Hot reload during development
-      hotReload: true,
+    compileUIKit({
+      sourceDir: 'ui',           // Directory containing .uikitml files
+      outputDir: 'public/ui',    // Where compiled .json files are written
+      verbose: true,             // Enable build logging
     }),
   ],
 });
@@ -109,21 +107,148 @@ export class PanelSystem extends createSystem({
 }) {}
 ```
 
-### Adding Component Kits to Your Spatial User Interface
+### Component Kits
 
-If you'd like to use a different or additional component kit for your uikitml file, you can configure the kits in the `spatialUI` feature list when creating a `World`:
+Component kits provide pre-built UI components like buttons, panels, inputs, and icons. IWSDK supports multiple kits that can be combined in your application.
+
+#### Available Component Kits
+
+- **`@pmndrs/uikit-horizon`** - Reality Labs design system (buttons, panels, inputs)
+- **`@pmndrs/uikit-lucide`** - Icon library with 1000+ icons
+- **`@pmndrs/uikit-default`** - Default kit based on shadcn design system
+
+#### Basic Kit Configuration
+
+Configure kits in the `spatialUI` feature when creating your world:
 
 ```typescript
-import * as horizonKit from "@pmndrs/uikit-horizon";
+import * as horizonKit from '@pmndrs/uikit-horizon';
 
-World.create(document.getElementById("scene-container"), {
-  ...
+World.create(document.getElementById('scene-container'), {
   features: {
-    ...
-    spatialUI: { kits: [horizonKit] },
+    spatialUI: {
+      kits: [horizonKit]
+    },
   },
-})
+});
 ```
+
+#### Combining Multiple Kits
+
+You can use components from multiple kits by passing them as an array:
+
+```typescript
+import * as horizonKit from '@pmndrs/uikit-horizon';
+import * as defaultKit from '@pmndrs/uikit-default';
+
+World.create(document.getElementById('scene-container'), {
+  features: {
+    spatialUI: {
+      kits: [horizonKit, defaultKit]
+    },
+  },
+});
+```
+
+#### Optimizing Bundle Size with Selective Imports
+
+For large icon libraries like `@pmndrs/uikit-lucide` (which contains over 1000 icons), importing the entire package can significantly increase your bundle size. Instead, import only the icons you need:
+
+```typescript
+import * as horizonKit from '@pmndrs/uikit-horizon';
+import { LogInIcon, RectangleGogglesIcon, SettingsIcon } from '@pmndrs/uikit-lucide';
+
+World.create(document.getElementById('scene-container'), {
+  features: {
+    spatialUI: {
+      kits: [
+        horizonKit,
+        { LogInIcon, RectangleGogglesIcon, SettingsIcon }  // Only these icons
+      ]
+    },
+  },
+});
+```
+
+This technique works with any kit component - just import what you need and pass it as an object in the kits array.
+
+## Color Scheme & Theming
+
+UIKitML supports automatic light and dark mode theming that can follow system preferences or be explicitly set.
+
+### Configuring Color Scheme
+
+Set the preferred color scheme when creating your world:
+
+```typescript
+import { ColorSchemeType } from '@iwsdk/core';
+
+World.create(document.getElementById('scene-container'), {
+  features: {
+    spatialUI: {
+      preferredColorScheme: ColorSchemeType.Dark,  // Force dark mode
+    },
+  },
+});
+```
+
+**Available color schemes:**
+
+- `ColorSchemeType.System` - Automatically follows browser/OS preference (default)
+- `ColorSchemeType.Light` - Force light mode
+- `ColorSchemeType.Dark` - Force dark mode
+
+### Changing Color Scheme at Runtime
+
+You can dynamically change the color scheme after initialization:
+
+```typescript
+const world = await World.create(container, { /* ... */ });
+const panelSystem = world.getSystem(PanelUISystem);
+
+// Switch to light mode
+panelSystem.config.preferredColorScheme.value = ColorSchemeType.Light;
+
+// Switch to dark mode
+panelSystem.config.preferredColorScheme.value = ColorSchemeType.Dark;
+
+// Follow system preference
+panelSystem.config.preferredColorScheme.value = ColorSchemeType.System;
+```
+
+### Dark Mode Styling
+
+Use the `:dark` pseudo-selector to define styles that apply only in dark mode:
+
+```html
+<style>
+  .heading {
+    color: #272727;              /* Light mode color */
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .heading:dark {
+    color: rgba(255, 255, 255, 0.9);  /* Dark mode color */
+  }
+
+  .panel {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+  }
+
+  .panel:dark {
+    background-color: #1a1a1a;
+    border: 1px solid #333333;
+  }
+</style>
+
+<Panel class="panel">
+  <span class="heading">Hello, Immersive Web!</span>
+</Panel>
+```
+
+The UI automatically updates when the color scheme changes, with no additional code needed.
 
 ## Overview of Properties and Features Available for Building Spatial User Interfaces
 
@@ -259,6 +384,7 @@ Define reusable styles with full pseudo-selector support using the `<style>` tag
 **Supported selectors:**
 
 - **States:** `:hover`, `:active`, `:focus`
+- **Theme:** `:dark` - Applies styles in dark mode
 - **Responsive:** `:sm`, `:md`, `:lg`, `:xl`, `:2xl`
 
 ### ID-Based Styling
