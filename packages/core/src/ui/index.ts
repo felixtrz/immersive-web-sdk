@@ -15,8 +15,8 @@
 export { UIKitDocument } from './document.js';
 
 // Updated components with file-based support
-export { PanelUI, PanelDocument, PanelUISystem } from './ui.js';
-export type { PanelUIProps } from './ui.js';
+export { PanelUI, PanelDocument, PanelUISystem, ColorSchemeType } from './ui.js';
+export type { PanelUIProps, ColorScheme } from './ui.js';
 
 // Behavior components
 export * from './follow.js';

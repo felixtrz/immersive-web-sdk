@@ -51,6 +51,7 @@ import {
   ScreenSpaceUISystem,
   PanelUI,
   PanelUISystem,
+  ColorScheme,
 } from '../ui/index.js';
 import { Visibility, VisibilitySystem } from '../visibility/index.js';
 import {
@@ -108,6 +109,7 @@ export type WorldOptions = {
       | {
           forwardHtmlEvents?: boolean;
           kits?: Array<Record<string, unknown>> | Record<string, unknown>;
+          preferredColorScheme?: ColorScheme;
         };
   };
 };
@@ -424,7 +426,7 @@ function registerFeatureSystems(
   const cameraEnabled = !!config.features.camera;
   const spatialUI = config.features.spatialUI as
     | boolean
-    | { forwardHtmlEvents?: boolean; kits?: any };
+    | { forwardHtmlEvents?: boolean; kits?: any; preferredColorScheme?: ColorScheme };
   const spatialUIEnabled = !!spatialUI;
 
   if (locomotionEnabled) {
@@ -476,6 +478,10 @@ function registerFeatureSystems(
     const kitsObj = Array.isArray(kitsVal)
       ? Object.assign({}, ...(kitsVal as Array<Record<string, unknown>>))
       : kitsVal;
+    const preferredColorScheme =
+      typeof spatialUI === 'object' && spatialUI
+        ? spatialUI.preferredColorScheme
+        : undefined;
 
     world
       .registerComponent(PanelUI)
@@ -485,6 +491,7 @@ function registerFeatureSystems(
         configData: {
           ...(forwardHtmlEvents !== undefined ? { forwardHtmlEvents } : {}),
           ...(kitsObj ? { kits: kitsObj } : {}),
+          ...(preferredColorScheme !== undefined ? { preferredColorScheme } : {}),
         },
       })
       .registerSystem(ScreenSpaceUISystem)

@@ -6,11 +6,34 @@
  */
 
 import { forwardHtmlEvents } from '@pmndrs/pointer-events';
-import { reversePainterSortStable, Component } from '@pmndrs/uikit';
+import {
+  reversePainterSortStable,
+  Component,
+  setPreferredColorScheme,
+} from '@pmndrs/uikit';
 import { interpret } from '@pmndrs/uikitml';
 import { Types, createComponent, Entity, createSystem } from '../ecs/index.js';
 import { Vector3 } from '../runtime/three.js';
 import { UIKitDocument } from './document.js';
+
+/**
+ * Color scheme options for UI theming.
+ * @category UI
+ */
+export const ColorSchemeType = {
+  /** Follow system/browser color scheme preference */
+  System: 'system',
+  /** Force light mode */
+  Light: 'light',
+  /** Force dark mode */
+  Dark: 'dark',
+} as const;
+
+/**
+ * Type representing available color scheme options.
+ * @category UI
+ */
+export type ColorScheme = (typeof ColorSchemeType)[keyof typeof ColorSchemeType];
 
 /**
  * Props accepted by the {@link PanelUI} component.
@@ -81,6 +104,8 @@ export class PanelUISystem extends createSystem(
     forwardHtmlEvents: { type: Types.Boolean, default: true },
     /** Additional pre-built UI component libraries */
     kits: { type: Types.Object, default: {} },
+    /** Color scheme preference for UI theming */
+    preferredColorScheme: { type: Types.String, default: 'system' },
   },
 ) {
   private htmlHandler?: {
@@ -104,6 +129,11 @@ export class PanelUISystem extends createSystem(
       } else {
         this.htmlHandler = undefined;
       }
+    });
+
+    // Apply color scheme preference
+    this.config.preferredColorScheme.subscribe((scheme) => {
+      setPreferredColorScheme(scheme as ColorScheme);
     });
 
     // Set up reactive UI loading when panels need configuration
