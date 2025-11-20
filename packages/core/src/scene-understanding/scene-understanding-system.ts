@@ -5,6 +5,47 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * Type declarations for WebXR Anchors API persistence features.
+ *
+ * These extensions to the WebXR Device API allow anchors to persist across sessions,
+ * enabling virtual objects to maintain their real-world positions even after the
+ * application is closed and reopened.
+ *
+ * @see {@link https://github.com/immersive-web/anchors/blob/main/explainer.md WebXR Anchors Module}
+ */
+declare global {
+  interface XRAnchor {
+    /**
+     * Requests a persistent handle (UUID) for this anchor.
+     * The UUID can be used with restorePersistentAnchor() to restore the anchor in future sessions.
+     */
+    requestPersistentHandle(): Promise<string>;
+    /**
+     * Deletes this anchor, removing it from tracking.
+     */
+    delete(): void;
+  }
+
+  interface XRSession {
+    /**
+     * Array of UUIDs for all persistent anchors available in this session.
+     */
+    readonly persistentAnchors: readonly string[];
+    /**
+     * Restores a previously created persistent anchor using its UUID.
+     * @param uuid - The persistent handle returned from requestPersistentHandle()
+     * @returns The restored anchor, or rejects if the anchor cannot be found
+     */
+    restorePersistentAnchor(uuid: string): Promise<XRAnchor>;
+    /**
+     * Permanently deletes a persistent anchor.
+     * @param uuid - The persistent handle of the anchor to delete
+     */
+    deletePersistentAnchor(uuid: string): Promise<void>;
+  }
+}
+
 import { createSystem, Entity, Types } from '../ecs/index.js';
 import {
   BoxGeometry,
@@ -82,17 +123,33 @@ export class SceneUnderstandingSystem extends createSystem(
   private planeFeatureEnabled: boolean | undefined;
   private meshFeatureEnabled: boolean | undefined;
   private anchorFeatureEnabled: boolean | undefined;
+
+  /** Tracks whether an anchor creation request is in progress to prevent duplicate requests */
   private anchorRequested: boolean = false;
+
+  /** The current XRAnchor instance for this session. Reset on session end to prevent stale XRSpace references. */
   private xrAnchor: XRAnchor | undefined;
+
   private currentPlanes = new Map<XRPlane, Entity>();
   private currentMeshes = new Map<XRMesh, Entity>();
+
+  /** Group that holds all anchored objects, positioned to match the XRAnchor's world pose */
   private anchoredGroup: Group = new Group();
 
   private matrixBuffer = new Matrix4();
 
+  /** localStorage key for storing the persistent anchor UUID */
+  private static readonly ANCHOR_UUID_STORAGE_KEY = 'iwsdk_scene_anchor_uuid';
+
   init(): void {
     this.xrManager.addEventListener('sessionstart', async () => {
       this.updateEnabledFeatures(this.xrManager.getSession());
+
+      // Attempt to restore a persistent anchor from previous sessions
+      // This allows anchored objects to maintain their world position across sessions
+      if (this.anchorFeatureEnabled) {
+        await this.tryRestorePersistentAnchor();
+      }
 
       // Temporarily disabling initiateRoomCapture API call due to the anhor wiping issue.
       // const planes = this.xrManager.getFrame()?.detectedPlanes;
@@ -105,6 +162,30 @@ export class SceneUnderstandingSystem extends createSystem(
       // 	await this.xrManager.getSession()?.initiateRoomCapture();
       // }
     });
+
+    this.xrManager.addEventListener('sessionend', () => {
+      // Clean up all plane and mesh entities to prevent stale XRSpace references
+      // XRSpace objects (like planeSpace, meshSpace, anchorSpace) are tied to a specific
+      // XRSession and become invalid when the session ends. Using them with a new session's
+      // XRFrame will cause "XRSpace and XRFrame sessions do not match" errors.
+      this.queries.planeEntities.entities.forEach((entity) => {
+        entity.destroy();
+      });
+      this.queries.meshEntities.entities.forEach((entity) => {
+        entity.destroy();
+      });
+
+      // Clear session-specific state to prevent stale references
+      // Note: The persistent anchor UUID in localStorage is preserved for the next session
+      this.xrAnchor = undefined;
+      this.anchorRequested = false;
+      this.planeFeatureEnabled = undefined;
+      this.meshFeatureEnabled = undefined;
+      this.anchorFeatureEnabled = undefined;
+      this.currentPlanes.clear();
+      this.currentMeshes.clear();
+    });
+
     this.world.createTransformEntity(this.anchoredGroup);
     this.scene.add(this.anchoredGroup);
 
@@ -144,6 +225,9 @@ export class SceneUnderstandingSystem extends createSystem(
       this.xrAnchor === undefined &&
       !this.anchorRequested
     ) {
+      console.log(
+        '[SceneUnderstandingSystem] Anchor needed but not present, triggering creation',
+      );
       this.createAnchor(referenceSpace);
     }
 
@@ -341,6 +425,58 @@ export class SceneUnderstandingSystem extends createSystem(
     }
   }
 
+  /**
+   * Attempts to restore a persistent anchor from a previous session.
+   *
+   * Persistent anchors allow anchored objects to maintain their world position
+   * across XR sessions. The anchor UUID is stored in localStorage and used to
+   * restore the same anchor when a new session starts.
+   *
+   * If restoration fails (e.g., user cleared the space, runtime doesn't support
+   * persistence, or the anchor was deleted), this fails gracefully and a new
+   * anchor will be created in the update loop.
+   */
+  private async tryRestorePersistentAnchor() {
+    try {
+      // Load the saved anchor UUID from localStorage
+      const savedUuid = localStorage.getItem(
+        SceneUnderstandingSystem.ANCHOR_UUID_STORAGE_KEY,
+      );
+
+      if (!savedUuid) {
+        return;
+      }
+
+      const session = this.xrManager.getSession();
+      if (!session) {
+        return;
+      }
+
+      // Attempt to restore the anchor using the saved UUID
+      this.anchorRequested = true;
+      this.xrAnchor = await session.restorePersistentAnchor(savedUuid);
+
+      if (!this.xrAnchor) {
+        // Restoration returned null, will create new anchor
+        this.anchorRequested = false;
+      }
+    } catch (_error) {
+      // Restoration failed - clear the invalid UUID and allow new anchor creation
+      localStorage.removeItem(
+        SceneUnderstandingSystem.ANCHOR_UUID_STORAGE_KEY,
+      );
+      this.anchorRequested = false;
+    }
+  }
+
+  /**
+   * Creates a new XR anchor at the origin of the reference space.
+   *
+   * The anchor is used to attach virtual objects to a stable real-world position.
+   * After creation, attempts to request a persistent handle so the anchor can be
+   * restored in future sessions. If persistence is not supported, the anchor
+   * will only last for the current session.
+   */
   private async createAnchor(referenceSpace: XRReferenceSpace | null) {
     const frame = this.xrManager.getFrame();
     if (!frame.createAnchor) {
@@ -358,6 +494,17 @@ export class SceneUnderstandingSystem extends createSystem(
     if (!this.xrAnchor) {
       this.anchorRequested = false;
       throw 'XRAnchor creation failed';
+    }
+
+    // Request a persistent handle for the anchor so it can be restored in future sessions
+    try {
+      const uuid = await this.xrAnchor.requestPersistentHandle();
+      localStorage.setItem(
+        SceneUnderstandingSystem.ANCHOR_UUID_STORAGE_KEY,
+        uuid,
+      );
+    } catch (_error) {
+      // Persistence not supported or failed - anchor will work for this session only
     }
   }
 

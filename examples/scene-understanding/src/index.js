@@ -41,7 +41,9 @@ export class SceneShowSystem extends createSystem({
     this.scene.add(this.anchoredMesh);
     const anchoredEntity = this.world.createTransformEntity(this.anchoredMesh);
     anchoredEntity.addComponent(Interactable);
-    anchoredEntity.addComponent(DistanceGrabbable, { movementMode: MovementMode.MoveFromTarget });
+    anchoredEntity.addComponent(DistanceGrabbable, {
+      movementMode: MovementMode.MoveFromTarget,
+    });
     anchoredEntity.addComponent(XRAnchor);
   }
   update(_delta, _time) {

@@ -183,7 +183,15 @@ export class InputSystem extends createSystem(
       object3D.removeEventListener('pointerup', fns.up);
       this.listeners.delete(object3D);
     }
-    entity.removeComponent(Hovered).removeComponent(Pressed);
+    // Remove hover/press state components if they exist
+    // Check hasComponent first to avoid warnings when entity is being destroyed
+    // (entity destruction removes all components, so trying to remove them again causes warnings)
+    if (entity.hasComponent(Hovered)) {
+      entity.removeComponent(Hovered);
+    }
+    if (entity.hasComponent(Pressed)) {
+      entity.removeComponent(Pressed);
+    }
   }
 }
 
