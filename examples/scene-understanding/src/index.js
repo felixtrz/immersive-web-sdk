@@ -10,7 +10,6 @@ import {
   Color,
   XRMesh,
   XRPlane,
-  SceneUnderstandingSystem,
   SessionMode,
   World,
   createSystem,
@@ -22,11 +21,15 @@ import {
   FrontSide,
   MovementMode,
   Vector3,
+  eq,
 } from '@iwsdk/core';
 
 export class SceneShowSystem extends createSystem({
   planeEntities: { required: [XRPlane] },
-  meshEntities: { required: [XRMesh] },
+  meshEntities: {
+    required: [XRMesh],
+    where: [eq(XRMesh, 'isBounded3D', true)],
+  },
 }) {
   init() {
     this.worldRotation = new Vector3();
@@ -37,7 +40,7 @@ export class SceneShowSystem extends createSystem({
         color: new Color(Math.random(), Math.random(), Math.random()),
       }),
     );
-    this.anchoredMesh.position.set(0, 1, 1);
+    this.anchoredMesh.position.set(0, 1, -1);
     this.scene.add(this.anchoredMesh);
     const anchoredEntity = this.world.createTransformEntity(this.anchoredMesh);
     anchoredEntity.addComponent(Interactable);
@@ -45,35 +48,40 @@ export class SceneShowSystem extends createSystem({
       movementMode: MovementMode.MoveFromTarget,
     });
     anchoredEntity.addComponent(XRAnchor);
-  }
-  update(_delta, _time) {
-    this.queries.planeEntities.entities.forEach((planeEntity) => {
+
+    this.queries.planeEntities.subscribe('qualify', (planeEntity) => {
       if (!planeEntity.hasComponent(Interactable)) {
         console.log(
-          'SceneShowSystem update + planeEntity ' + planeEntity.index,
+          'SceneShowSystem configure + planeEntity ' + planeEntity.index,
         );
-        planeEntity.object3D.material.wireframe = false;
-        planeEntity.object3D.material.visible = false;
-        planeEntity.object3D.material.opacity = 0.3;
+        planeEntity.object3D.visible = false;
         planeEntity.addComponent(Interactable);
         planeEntity.object3D.addEventListener('pointerenter', () => {
-          planeEntity.object3D.material.visible = true;
+          if (planeEntity.object3D) {
+            planeEntity.object3D.visible = true;
+          }
         });
         planeEntity.object3D.addEventListener('pointerleave', () => {
-          planeEntity.object3D.material.visible = false;
+          if (planeEntity.object3D) {
+            planeEntity.object3D.visible = false;
+          }
         });
       }
     });
 
-    this.queries.meshEntities.entities.forEach((meshEntity) => {
+    this.queries.meshEntities.subscribe('qualify', (meshEntity) => {
       if (!meshEntity.hasComponent(Interactable)) {
         meshEntity.addComponent(Interactable);
-        meshEntity.object3D.material.visible = false;
+        meshEntity.object3D.visible = false;
         meshEntity.object3D.addEventListener('pointerenter', () => {
-          meshEntity.object3D.material.visible = true;
+          if (meshEntity.object3D) {
+            meshEntity.object3D.visible = true;
+          }
         });
         meshEntity.object3D.addEventListener('pointerleave', () => {
-          meshEntity.object3D.material.visible = false;
+          if (meshEntity.object3D) {
+            meshEntity.object3D.visible = false;
+          }
         });
       }
     });
@@ -93,16 +101,12 @@ World.create(document.getElementById('scene-container'), {
   },
   features: {
     grabbing: true,
+    sceneUnderstanding: true,
   },
 }).then((world) => {
   const { scene } = world;
 
   scene.background = new Color(0x808080);
 
-  world
-    .registerComponent(XRPlane)
-    .registerComponent(XRMesh)
-    .registerComponent(XRAnchor)
-    .registerSystem(SceneUnderstandingSystem)
-    .registerSystem(SceneShowSystem);
+  world.registerSystem(SceneShowSystem);
 });

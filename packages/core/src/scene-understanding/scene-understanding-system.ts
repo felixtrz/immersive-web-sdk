@@ -314,7 +314,7 @@ export class SceneUnderstandingSystem extends createSystem(
           const width = maxX - minX;
           const height = maxZ - minZ;
 
-          const geometry = new BoxGeometry(width, 0.01, height);
+          const geometry = new BoxGeometry(width, 0.001, height);
 
           if (this.currentPlanes.has(plane) === false) {
             const mesh = new Mesh(geometry, this.planeMaterial);
