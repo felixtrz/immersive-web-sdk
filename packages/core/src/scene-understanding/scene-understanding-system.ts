@@ -5,47 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-/**
- * Type declarations for WebXR Anchors API persistence features.
- *
- * These extensions to the WebXR Device API allow anchors to persist across sessions,
- * enabling virtual objects to maintain their real-world positions even after the
- * application is closed and reopened.
- *
- * @see {@link https://github.com/immersive-web/anchors/blob/main/explainer.md WebXR Anchors Module}
- */
-declare global {
-  interface XRAnchor {
-    /**
-     * Requests a persistent handle (UUID) for this anchor.
-     * The UUID can be used with restorePersistentAnchor() to restore the anchor in future sessions.
-     */
-    requestPersistentHandle(): Promise<string>;
-    /**
-     * Deletes this anchor, removing it from tracking.
-     */
-    delete(): void;
-  }
-
-  interface XRSession {
-    /**
-     * Array of UUIDs for all persistent anchors available in this session.
-     */
-    readonly persistentAnchors: readonly string[];
-    /**
-     * Restores a previously created persistent anchor using its UUID.
-     * @param uuid - The persistent handle returned from requestPersistentHandle()
-     * @returns The restored anchor, or rejects if the anchor cannot be found
-     */
-    restorePersistentAnchor(uuid: string): Promise<XRAnchor>;
-    /**
-     * Permanently deletes a persistent anchor.
-     * @param uuid - The persistent handle of the anchor to delete
-     */
-    deletePersistentAnchor(uuid: string): Promise<void>;
-  }
-}
-
 import { createSystem, Entity, Types } from '../ecs/index.js';
 import {
   BoxGeometry,
@@ -471,6 +430,13 @@ export class SceneUnderstandingSystem extends createSystem(
 
       // Attempt to restore the anchor using the saved UUID
       this.anchorRequested = true;
+
+      if (!session.restorePersistentAnchor) {
+        console.warn('XRSession.restorePersistentAnchor not supported');
+        this.anchorRequested = false;
+        return;
+      }
+
       this.xrAnchor = await session.restorePersistentAnchor(savedUuid);
 
       if (!this.xrAnchor) {
@@ -513,11 +479,13 @@ export class SceneUnderstandingSystem extends createSystem(
 
     // Request a persistent handle for the anchor so it can be restored in future sessions
     try {
-      const uuid = await this.xrAnchor.requestPersistentHandle();
-      localStorage.setItem(
-        SceneUnderstandingSystem.ANCHOR_UUID_STORAGE_KEY,
-        uuid,
-      );
+      if (this.xrAnchor.requestPersistentHandle) {
+        const uuid = await this.xrAnchor.requestPersistentHandle();
+        localStorage.setItem(
+          SceneUnderstandingSystem.ANCHOR_UUID_STORAGE_KEY,
+          uuid,
+        );
+      }
     } catch (_error) {
       // Persistence not supported or failed - anchor will work for this session only
     }
