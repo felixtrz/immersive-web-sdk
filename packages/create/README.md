@@ -9,7 +9,7 @@ This package is CLI-only: no programmatic API exports. TypeScript sources live i
 
 The CLI uses @pmndrs/chef to apply recipes fetched from the CDN (no local fallback). Recipes live at:
 
-- `${ASSETS_BASE}/recipes/index.json` (default base: `https://iwsdk-assets.pages.dev`)
+- `${ASSETS_BASE}/recipes/index.json` (default base: `https://cdn.jsdelivr.net/npm/@iwsdk/starter-assets@<version>/dist`, falls back to `@latest` if version not yet indexed)
 - `${ASSETS_BASE}/recipes/<variant>.recipe.json`
 
 ## Usage (local dev)
@@ -17,7 +17,7 @@ The CLI uses @pmndrs/chef to apply recipes fetched from the CDN (no local fallba
 - Build once: `pnpm --filter @iwsdk/create build`
 - Watch mode: `pnpm --filter @iwsdk/create dev`
 
-The CLI fetches recipes and assets from a public CDN by default: `https://iwsdk-assets.pages.dev`. Override with:
+The CLI fetches recipes and assets from jsDelivr's npm CDN. By default, it uses the same version as the CLI (e.g., `https://cdn.jsdelivr.net/npm/@iwsdk/starter-assets@0.2.1/dist`), falling back to `@latest` if that version isn't indexed yet. Override with:
 
 - `--assets-base <url>` or env `IWSDK_ASSET_BASE` (e.g., your own CDN root that serves `/recipes` and `/assets`)
 

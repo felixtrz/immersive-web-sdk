@@ -486,7 +486,9 @@ async function generateRecipeForStarter(
 }
 
 async function main() {
-  const base = process.env.IWSDK_ASSET_BASE || 'https://iwsdk-assets.pages.dev';
+  const base =
+    process.env.IWSDK_ASSET_BASE ||
+    `https://cdn.jsdelivr.net/npm/@iwsdk/starter-assets@${VERSION}/dist`;
   // Determine SDK version (kept in recipe for traceability only)
   let pkgVersion = '0.0.0';
   try {

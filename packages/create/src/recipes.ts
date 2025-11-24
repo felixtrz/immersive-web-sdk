@@ -7,12 +7,21 @@
 
 import type { Recipe } from '@pmndrs/chef';
 import type { VariantId } from './types.js';
+import { VERSION } from './version.js';
 
 export const DEFAULT_ASSETS_BASE =
-  process.env.IWSDK_ASSET_BASE || 'https://iwsdk-assets.pages.dev';
+  process.env.IWSDK_ASSET_BASE ||
+  `https://cdn.jsdelivr.net/npm/@iwsdk/starter-assets@${VERSION}/dist`;
 
-async function fetchJSON<T = unknown>(url: string): Promise<T> {
-  const res = await fetch(url);
+async function fetchJSON<T = unknown>(
+  url: string,
+  fallbackUrl?: string,
+): Promise<T> {
+  let res = await fetch(url);
+  // Fallback to @latest if pinned version not found (e.g., jsDelivr indexing delay)
+  if (!res.ok && res.status === 404 && fallbackUrl) {
+    res = await fetch(fallbackUrl);
+  }
   if (!res.ok) {
     throw new Error(`HTTP ${res.status} for ${url}`);
   }
@@ -24,7 +33,15 @@ export async function fetchRecipesIndex(base = DEFAULT_ASSETS_BASE) {
     'recipes/index.json',
     base.endsWith('/') ? base : base + '/',
   ).toString();
-  return fetchJSON<{ id: VariantId; name: string; recipe: string }[]>(url);
+  // If using versioned base, create fallback to @latest
+  const fallbackUrl =
+    base === DEFAULT_ASSETS_BASE
+      ? url.replace(`@${VERSION}/`, '@latest/')
+      : undefined;
+  return fetchJSON<{ id: VariantId; name: string; recipe: string }[]>(
+    url,
+    fallbackUrl,
+  );
 }
 
 export async function fetchRecipe(id: VariantId, base = DEFAULT_ASSETS_BASE) {
@@ -32,7 +49,12 @@ export async function fetchRecipe(id: VariantId, base = DEFAULT_ASSETS_BASE) {
     `recipes/${id}.recipe.json`,
     base.endsWith('/') ? base : base + '/',
   ).toString();
-  return fetchJSON<Recipe>(url);
+  // If using versioned base, create fallback to @latest
+  const fallbackUrl =
+    base === DEFAULT_ASSETS_BASE
+      ? url.replace(`@${VERSION}/`, '@latest/')
+      : undefined;
+  return fetchJSON<Recipe>(url, fallbackUrl);
 }
 
 export async function fetchRecipeByFileName(
@@ -43,5 +65,10 @@ export async function fetchRecipeByFileName(
     `recipes/${fileName}`,
     base.endsWith('/') ? base : base + '/',
   ).toString();
-  return fetchJSON<Recipe>(url);
+  // If using versioned base, create fallback to @latest
+  const fallbackUrl =
+    base === DEFAULT_ASSETS_BASE
+      ? url.replace(`@${VERSION}/`, '@latest/')
+      : undefined;
+  return fetchJSON<Recipe>(url, fallbackUrl);
 }
