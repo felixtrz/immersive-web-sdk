@@ -106,7 +106,7 @@ entities:
         com.iwsdk.components.Interactable:
           {}
         com.iwsdk.components.PanelUI:
-          config: /ui/welcome.uikitml
+          config: ./ui/welcome.uikitml
         com.iwsdk.components.ScreenSpace:
           left: 20px
           top: 20px

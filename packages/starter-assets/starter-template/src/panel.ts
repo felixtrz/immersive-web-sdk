@@ -18,7 +18,7 @@ import {
 export class PanelSystem extends createSystem({
   welcomePanel: {
     required: [PanelUI, PanelDocument],
-    where: [eq(PanelUI, 'config', '/ui/welcome.json')],
+    where: [eq(PanelUI, 'config', './ui/welcome.json')],
   },
 }) {
   init() {
@@ -26,7 +26,9 @@ export class PanelSystem extends createSystem({
       const document = PanelDocument.data.document[
         entity.index
       ] as UIKitDocument;
-      if (!document) return;
+      if (!document) {
+        return;
+      }
 
       const xrButton = document.getElementById('xr-button') as UIKit.Text;
       xrButton.addEventListener('click', () => {

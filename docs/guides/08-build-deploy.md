@@ -138,7 +138,14 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: ['main']
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build-and-deploy:
@@ -160,12 +167,14 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        if: github.ref == 'refs/heads/main'
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 ```
 
 ## What's Next?
@@ -178,11 +187,6 @@ Throughout this tutorial, you've learned how to:
 - Create professional environments with lighting and backgrounds
 - Build interactive experiences with grabbing and locomotion
 - Develop custom systems and components using ECS architecture
-- Build and deploy optimized WebXR applications
-
-For developers ready to dive deeper into advanced IWSDK development, continue with:
-
-- **Chapter 9**: Advanced Topics - Explore physics simulation, scene understanding, and performance optimization
-- **Chapter 10**: Production Patterns - Learn enterprise-level development practices, testing strategies, and deployment pipelines
+- Build and deploy IWSDK applications
 
 You now have the foundation to create professional WebXR experiences with IWSDK!
