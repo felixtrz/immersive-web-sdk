@@ -6,7 +6,7 @@
   "scripts": {
     "build": "pnpm --filter '@iwsdk/core' run build",
     "build:all": "pnpm -r run build",
-    "build:tgz": "./scripts/build-tgz.sh",
+    "build:tgz": "bash ./scripts/build-tgz.sh",
     "bundle:sdk": "bash ./scripts/build-sdk-bundle.sh",
     "docs:api": "typedoc && node scripts/postprocess-typedoc.cjs",
     "docs:dev": "vitepress dev docs",

@@ -12,6 +12,13 @@ set -e
 echo "🚀 Building standalone tgz packages..."
 
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+UNAME=$(uname)
+if [[ "$UNAME" == CYGWIN* || "$UNAME" == MINGW* ]]; then
+    # In windows, change base directory from '/c/Users/...' to 'C:/Users/...'
+    BASE_DIR="${BASE_DIR:1:1}:${BASE_DIR:2}"
+    BASE_DIR="${BASE_DIR^}"
+    echo "Detected running on Windows, using $BASE_DIR as base directory"
+fi
 PACKAGES_DIR="$BASE_DIR/packages"
 EXAMPLES_DIR="$BASE_DIR/examples"
 
