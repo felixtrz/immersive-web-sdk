@@ -52,3 +52,65 @@ e.setValue(Health, 'current', 75);
 const pos = e.getVectorView(Transform, 'position'); // Float32Array
 pos[1] += 1; // move up
 ```
+
+## Destroying Entities
+
+IWSDK provides two ways to destroy entities:
+
+### `entity.destroy()`
+
+Removes the entity from the ECS and detaches its `object3D` from the scene graph:
+
+```ts
+entity.destroy();
+```
+
+This is safe and non-destructive to GPU resources. The geometry, materials, and textures remain in GPU memory and can be reused by other entities.
+
+### `entity.dispose()`
+
+Destroys the entity AND disposes all GPU resources (geometry, materials, textures):
+
+```ts
+entity.dispose();
+```
+
+::: warning
+**Use with caution!** `dispose()` is destructive and will free GPU memory for:
+- All geometries attached to the entity's `object3D` and its children
+- All materials (including shared materials)
+- All textures referenced by those materials
+
+If other entities share the same geometry, material, or texture, they will break after calling `dispose()`.
+:::
+
+### When to use each
+
+| Scenario | Method |
+|----------|--------|
+| Removing an entity that uses shared/reusable assets | `destroy()` |
+| Removing an entity with unique, one-off geometry/materials | `dispose()` |
+| Level unloading with asset reuse | `destroy()` |
+| Full cleanup of procedurally generated content | `dispose()` |
+
+### Example: Safe cleanup pattern
+
+```ts
+// If you created unique resources, dispose them
+const geometry = new BoxGeometry(1, 1, 1);
+const material = new MeshStandardMaterial({ color: 0xff0000 });
+const mesh = new Mesh(geometry, material);
+const entity = world.createTransformEntity(mesh);
+
+// Later: full cleanup since resources aren't shared
+entity.dispose();
+```
+
+```ts
+// If using loaded/shared assets, just destroy
+const gltf = await AssetManager.loadGLTF('model.glb');
+const entity = world.createTransformEntity(gltf.scene.clone());
+
+// Later: don't dispose - other entities may use the same materials
+entity.destroy();
+```

@@ -62,7 +62,12 @@ this.queries.panels.subscribe('disqualify', (e) => {
 
 - `createEntity()` creates a bare entity (no `object3D`).
 - `createTransformEntity(object?, parentOrOptions?)` creates an entity with an `object3D`, injects a `Transform`, and parents it under the level root or scene based on options.
-- `entity.destroy()` marks the entity inactive, clears its bitmask, resets query membership, and detaches its `object3D` from the scene.
+- `entity.destroy()` marks the entity inactive, clears its bitmask, resets query membership, and detaches its `object3D` from the scene. GPU resources (geometry, materials, textures) are preserved.
+- `entity.dispose()` does everything `destroy()` does, plus disposes all GPU resources. Use with caution when resources may be shared.
+
+::: tip
+Use `destroy()` by default. Only use `dispose()` when you're certain the entity's resources aren't shared with other entities.
+:::
 
 Parenting rules
 

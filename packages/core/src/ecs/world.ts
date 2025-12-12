@@ -20,6 +20,7 @@ import {
 import { LevelTag } from '../level/index.js';
 import type { Object3DEventMap } from '../runtime/index.js';
 import {
+  Material,
   Object3D,
   PerspectiveCamera,
   Scene,
@@ -88,9 +89,55 @@ export class World extends ElicsWorld {
     );
     this.entityManager.releaseEntityInstance = (entity: Entity) => {
       originalReleaseFunc(entity);
-      entity.object3D?.removeFromParent();
-      delete entity.object3D;
+      const obj = entity.object3D;
+      if (obj) {
+        // Check if entity was marked for resource disposal
+        if ((entity as any)._disposeResources) {
+          this.disposeObject3DResources(obj);
+          delete (entity as any)._disposeResources;
+        }
+        obj.removeFromParent();
+        delete entity.object3D;
+      }
     };
+  }
+
+  /**
+   * Dispose of an Object3D's GPU resources (geometry, materials, textures).
+   * Traverses all descendants and cleans up disposable resources.
+   *
+   * @remarks
+   * This is called automatically when an entity is destroyed with `disposeResources: true`.
+   * Use with caution when resources may be shared across multiple entities.
+   */
+  private disposeObject3DResources(object: Object3D): void {
+    object.traverse((child: any) => {
+      // Dispose geometry
+      if (child.geometry) {
+        child.geometry.dispose();
+      }
+
+      // Dispose materials (can be single or array)
+      if (child.material) {
+        const materials: Material[] = Array.isArray(child.material)
+          ? child.material
+          : [child.material];
+
+        for (const material of materials) {
+          // Dispose textures attached to the material
+          for (const key of Object.keys(material)) {
+            const value = (material as any)[key];
+            if (value && typeof value.dispose === 'function') {
+              // Check if it's a texture (has isTexture property)
+              if (value.isTexture) {
+                value.dispose();
+              }
+            }
+          }
+          material.dispose();
+        }
+      }
+    });
   }
 
   createEntity(): Entity {
