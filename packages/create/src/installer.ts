@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { spawn } from 'child_process';
+import { spawn } from 'cross-spawn';
 import { Chalk } from 'chalk';
 import ora, { Ora } from 'ora';
 import type { ActionItem } from './types.js';
@@ -24,7 +24,10 @@ export async function installDependencies(outDir: string) {
   const args = ['install'];
   const cmd = 'npm';
   try {
-    const child = spawn(cmd, args, { cwd: outDir, stdio: 'inherit' });
+    const child = spawn(cmd, args, {
+      cwd: outDir,
+      stdio: 'inherit',
+    });
     await new Promise<void>((resolve, reject) => {
       child.on('exit', (code) =>
         code === 0 ? resolve() : reject(new Error(`Install failed (${code})`)),
