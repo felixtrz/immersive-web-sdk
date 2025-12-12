@@ -11,6 +11,7 @@ import fs from 'fs-extra';
 import type { Plugin, ViteDevServer } from 'vite';
 import { regenerateGLXF, createFileWatcher, cleanup } from './file-watcher.js';
 import type { GLXFGenerationOptions, ProcessedGLXFOptions } from './types.js';
+import { resolveMetaSpatialCliPath } from './cli-path-resolver.js';
 
 // Export types
 export type { GLXFGenerationOptions } from './types.js';
@@ -30,24 +31,12 @@ interface GLXFGenerationStat {
 function processOptions(
   options: GLXFGenerationOptions = {},
 ): ProcessedGLXFOptions {
-  const os = process.platform;
-  var metaSpatialCliPath;
-
-  if (os === 'darwin') {
-    metaSpatialCliPath =
-      '/Applications/Meta Spatial Editor.app/Contents/MacOS/CLI';
-  } else {
-    const directoryPath = 'C:\\Program Files\\Meta Spatial Editor\\';
-    const files = fs.readdirSync(directoryPath);
-    metaSpatialCliPath = directoryPath + files[0] + '\\Resources\\CLI.exe';
-  }
-
   return {
     metaSpatialDir: 'metaspatial',
     outputDir: 'generated/glxf',
     watchDebounceMs: 500,
     formats: ['glxf'] as const,
-    metaSpatialCliPath: metaSpatialCliPath,
+    metaSpatialCliPath: resolveMetaSpatialCliPath(),
     verbose: false,
     enableWatcher: true,
     ignorePattern: /components\//,
