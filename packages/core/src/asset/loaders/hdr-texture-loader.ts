@@ -6,7 +6,7 @@
  */
 
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 import {
   EquirectangularReflectionMapping,
   LoadingManager,
@@ -18,11 +18,11 @@ import { CacheManager } from '../cache-manager.js';
  * @category Assets
  */
 export class HDRTextureAssetLoader {
-  private static rgbeLoader: RGBELoader;
+  private static hdrLoader: HDRLoader;
   private static exrLoader: EXRLoader;
 
   static init(loadingManager: LoadingManager): void {
-    this.rgbeLoader = new RGBELoader(loadingManager);
+    this.hdrLoader = new HDRLoader(loadingManager);
     this.exrLoader = new EXRLoader(loadingManager);
   }
 
@@ -68,7 +68,7 @@ export class HDRTextureAssetLoader {
       if (isEXR) {
         this.exrLoader.load(url, onLoad, undefined, onError);
       } else {
-        this.rgbeLoader.load(url, onLoad, undefined, onError);
+        this.hdrLoader.load(url, onLoad, undefined, onError);
       }
     });
 

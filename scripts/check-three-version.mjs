@@ -11,10 +11,55 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const lockfilePath = path.join(__dirname, '..', 'pnpm-lock.yaml');
+const rootDir = path.join(__dirname, '..');
+const lockfilePath = path.join(rootDir, 'pnpm-lock.yaml');
+const packageJsonPath = path.join(rootDir, 'package.json');
 
-const EXPECTED_THREE_VERSION = 'super-three@0.177.0';
-const EXPECTED_TYPES_VERSION = '@types/three@0.177.0';
+/**
+ * Read expected versions from package.json pnpm overrides
+ */
+function getExpectedVersions() {
+  if (!fs.existsSync(packageJsonPath)) {
+    console.error('❌ package.json not found at:', packageJsonPath);
+    process.exit(1);
+  }
+
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+  const overrides = packageJson?.pnpm?.overrides;
+
+  if (!overrides) {
+    console.error('❌ No pnpm.overrides found in package.json');
+    process.exit(1);
+  }
+
+  const threeOverride = overrides.three;
+  const typesThreeOverride = overrides['@types/three'];
+
+  if (!threeOverride) {
+    console.error('❌ No "three" override found in pnpm.overrides');
+    process.exit(1);
+  }
+
+  if (!typesThreeOverride) {
+    console.error('❌ No "@types/three" override found in pnpm.overrides');
+    process.exit(1);
+  }
+
+  // Extract version from "npm:super-three@X.Y.Z" format
+  const threeMatch = threeOverride.match(/super-three@([\d.]+)/);
+  if (!threeMatch) {
+    console.error('❌ Could not parse three version from:', threeOverride);
+    process.exit(1);
+  }
+
+  return {
+    three: `super-three@${threeMatch[1]}`,
+    typesThree: `@types/three@${typesThreeOverride}`,
+  };
+}
+
+const { three: EXPECTED_THREE_VERSION, typesThree: EXPECTED_TYPES_VERSION } =
+  getExpectedVersions();
 
 /**
  * Check that pnpm-lock.yaml only contains the correct three.js version
@@ -81,7 +126,9 @@ function checkThreeVersion() {
     );
     console.error('To fix this:');
     console.error('  1. Check package.json files for direct dependencies on "three"');
-    console.error('  2. Ensure all packages use: "three": "npm:super-three@0.177.0"');
+    console.error(
+      `  2. Ensure all packages use: "three": "npm:${EXPECTED_THREE_VERSION}"`,
+    );
     console.error('  3. Run: rm -rf node_modules pnpm-lock.yaml && pnpm install');
     process.exit(1);
   }

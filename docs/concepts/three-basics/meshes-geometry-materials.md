@@ -253,9 +253,10 @@ IWSDK provides good default lighting:
 For realistic reflections and lighting:
 
 ```ts
-import { RGBELoader, PMREMGenerator } from '@iwsdk/core';
+import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
+import { PMREMGenerator } from '@iwsdk/core';
 
-const loader = new RGBELoader();
+const loader = new HDRLoader();
 const pmremGenerator = new PMREMGenerator(world.renderer);
 
 loader.load('/environments/sunset.hdr', (texture) => {
