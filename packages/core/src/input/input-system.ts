@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { PointerEventsMap } from '@pmndrs/pointer-events';
+import type { PointerEvent, PointerEventsMap } from '@pmndrs/pointer-events';
 import { createSystem, Entity, VisibilityState } from '../ecs/index.js';
 import { Mesh, Object3D, Object3DEventMap } from '../runtime/index.js';
 import { Transform } from '../transform/index.js';
@@ -116,22 +116,26 @@ export class InputSystem extends createSystem(
       }
     };
 
-    const enter = () => {
+    const enter = (event: PointerEvent) => {
       maybeRefreshBVH();
+      event.stopPropagation();
       if (!entity.hasComponent(Hovered)) {
         entity.addComponent(Hovered);
       }
     };
-    const leave = () => {
+    const leave = (event: PointerEvent) => {
+      event.stopPropagation();
       entity.removeComponent(Hovered);
     };
-    const down = () => {
+    const down = (event: PointerEvent) => {
       maybeRefreshBVH();
+      event.stopPropagation();
       if (!entity.hasComponent(Pressed)) {
         entity.addComponent(Pressed);
       }
     };
-    const up = () => {
+    const up = (event: PointerEvent) => {
+      event.stopPropagation();
       entity.removeComponent(Pressed);
     };
 
