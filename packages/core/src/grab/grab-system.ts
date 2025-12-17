@@ -18,6 +18,7 @@ import { DistanceGrabbable } from './distance-grabbable.js';
 import { DistanceGrabHandle, MovementMode, Handle } from './handles.js';
 import { OneHandGrabbable } from './one-hand-grabbable.js';
 import { TwoHandsGrabbable } from './two-hands-grabbable.js';
+import { LevelTag } from '../level/index.js';
 
 /**
  * Manages interactive object grabbing and manipulation for VR/AR experiences.
@@ -241,6 +242,9 @@ export class GrabSystem extends createSystem(
     const object = entity.object3D;
     if (!(object instanceof Object3D)) return;
     const obj = object as Object3D<PointerEventsMap & Object3DEventMap>;
+    const rootEntity = entity.hasComponent(LevelTag)
+                ? this.world.activeLevel.value
+                : this.world.sceneEntity;
     const rotateMax = entity.getVectorView(DistanceGrabbable, 'rotateMax');
     const rotateMin = entity.getVectorView(DistanceGrabbable, 'rotateMin');
     const translateMax = entity.getVectorView(
@@ -256,6 +260,9 @@ export class GrabSystem extends createSystem(
     const movementMode = entity.getValue(DistanceGrabbable, 'movementMode');
     const returnToOrigin = Boolean(
       entity.getValue(DistanceGrabbable, 'returnToOrigin'),
+    );
+    const detachOnGrab = Boolean(
+      entity.getValue(DistanceGrabbable, 'detachOnGrab'),
     );
     const targetPosOffset = entity.getVectorView(
       DistanceGrabbable,
@@ -297,6 +304,7 @@ export class GrabSystem extends createSystem(
     });
     const handle = new DistanceGrabHandle(
       obj,
+      rootEntity.object3D!,
       opts,
       movementMode!,
       returnToOrigin,
@@ -308,6 +316,7 @@ export class GrabSystem extends createSystem(
         targetQuatOffset[2],
         targetQuatOffset[3],
       ),
+      detachOnGrab,
     );
     handle.bind(obj);
     obj.pointerEventsType = { deny: 'grab' };

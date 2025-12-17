@@ -47,9 +47,9 @@ entities:
       tag: Environment
     - components:
         com.iwsdk.components.DistanceGrabbable:
-          translate: false
-          movementMode: 3
           scale: false
+          movementMode: 3
+          translate: false
         com.iwsdk.components.Interactable:
           {}
         com.meta.components.Animatable:
@@ -81,15 +81,16 @@ entities:
       tag: earth
     - components:
         com.iwsdk.components.DistanceGrabbable:
-          targetPositionOffset:
-            - 0.100000001
-            - 0
-            - 0
+          detachOnGrab: true
           targetQuaternionOffset:
             - 0
             - 120
             - 0
             - 1
+          targetPositionOffset:
+            - 0.100000001
+            - 0
+            - 0
         com.iwsdk.components.Interactable:
           {}
         com.meta.components.Animatable:
@@ -206,7 +207,8 @@ entities:
       tag: pin3
     - components:
         com.iwsdk.components.DistanceGrabbable:
-          {}
+          movementMode: 0
+          detachOnGrab: true
         com.iwsdk.components.Interactable:
           {}
         com.meta.components.Animatable:
@@ -272,16 +274,16 @@ entities:
       tag: opera_house
     - components:
         com.iwsdk.components.DistanceGrabbable:
-          targetPositionOffset:
-            - 0
-            - 0.300000012
-            - 0
-          moveSpeedFactor: 0.5
           targetQuaternionOffset:
             - 12
             - 0
             - 0
             - 1
+          moveSpeedFactor: 0.5
+          targetPositionOffset:
+            - 0
+            - 0.300000012
+            - 0
         com.iwsdk.components.Interactable:
           {}
         com.meta.components.Animatable:

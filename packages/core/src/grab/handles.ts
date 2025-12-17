@@ -43,12 +43,14 @@ export class DistanceGrabHandle<T> extends HandleStore<T> {
 
   constructor(
     readonly target_: Object3D | { current?: Object3D | null },
+    readonly sceneRoot_: Object3D,
     public readonly getOptions: () => HandleOptions<T> = () => ({}),
     public readonly movementMode: string,
-    public readonly returnToOrigin: Boolean,
+    public readonly returnToOrigin: boolean,
     public readonly moveSpeedFactor: number = 0.1,
     public readonly targetPosOffset: Vector3 = new Vector3(0, 0, 0),
     public readonly targetQuatOffset: Quaternion = new Quaternion(0, 0, 0, 1),
+    public readonly detachOnGrab: boolean,
   ) {
     super(target_, getOptions);
 
@@ -60,14 +62,6 @@ export class DistanceGrabHandle<T> extends HandleStore<T> {
   }
 
   update(time: number) {
-    if (
-      this.movementMode === MovementMode.RotateAtSource ||
-      this.movementMode === MovementMode.MoveFromTarget
-    ) {
-      super.update(time);
-      return;
-    }
-
     const target = this.getTarget();
 
     if (
@@ -79,6 +73,18 @@ export class DistanceGrabHandle<T> extends HandleStore<T> {
       if (this.previousPointerOrigin != undefined) {
         this.previousPointerOrigin = undefined;
       }
+      return;
+    }
+
+    if (this.detachOnGrab && target.parent != this.sceneRoot_) {
+      this.sceneRoot_.attach(target);
+    }
+
+    if (
+      this.movementMode === MovementMode.RotateAtSource ||
+      this.movementMode === MovementMode.MoveFromTarget
+    ) {
+      super.update(time);
       return;
     }
 

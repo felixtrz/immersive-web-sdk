@@ -110,6 +110,8 @@ export const DistanceGrabbable = createComponent(
     },
     /** A boolean value to set whether the object snap back to its original position and rotation. */
     returnToOrigin: { type: Types.Boolean, default: false },
+    /** A boolean value to set whether the object will be detached from its parent and attach to the scene/Level root when grabbed. */
+    detachOnGrab: { type: Types.Boolean, default: false },
     /** Object movement and rotation speed factor for the MoveTowardsTarget movement mode with a scale from 0 to 1. */
     moveSpeedFactor: { type: Types.Float32, default: 0.1 },
     /** Target position offset relative to the input source for MoveTowardsTarget mode in [x, y, z]. */
