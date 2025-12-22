@@ -1,45 +1,53 @@
-# WebXR Framework Boilerplate
+# WebXR Framework Scene Understanding Example
 
-This is the official boilerplate project for the WebXR Framework, designed for optimal developer, designer, and tech artist workflow.
+This example demonstrates WebXR scene understanding features in the Immersive Web SDK (IWSDK), showcasing real-world plane detection, mesh detection, and spatial anchors for augmented reality (AR) applications. Learn how to build AR experiences that understand and interact with the physical environment.
+
+## 🎯 What You'll Learn
+
+This example demonstrates:
+
+- **Scene Understanding System**: Detecting and tracking real-world surfaces and objects
+- **Plane Detection**: Identifying horizontal and vertical surfaces (floors, walls, tables)
+- **Mesh Detection**: Capturing detailed 3D geometry of the environment
+- **Spatial Anchors**: Placing virtual objects that stay fixed in the real world
+- **Interactive AR**: Making detected planes and meshes interactive with pointer events
+- **AR Session Management**: Configuring WebXR AR sessions with required features
+
+### What's in the Example
+
+The example includes:
+
+1. **Plane Detection System**: Automatically detects real-world surfaces and visualizes them as wireframe meshes
+2. **Mesh Detection System**: Captures 3D geometry of the environment with semantic labels
+3. **Anchored Sphere**: A grabbable sphere that stays anchored to a fixed position in the real world
+4. **Interactive Visualization**: Detected planes and meshes become visible when you point at them
+5. **Custom System**: A `SceneShowSystem` that manages visibility and interaction of detected geometry
 
 ## 📁 Project Structure
 
 ```
-boilerplate/
+scene-understanding/
 ├── src/                    # Source code
-│   ├── index.js           # Main application entry point
-│   ├── settings.js        # Settings configuration
-│   ├── test-component.js  # Example component
-│   └── settings.uikitml   # UI markup
-├── public/                # Static assets (served at root)
-│   ├── gltf/             # 3D models in GLTF format
-│   ├── glxf/             # GLXF scene files
-│   ├── textures/         # Images and texture files
-│   ├── audio/            # Audio files
-│   └── models/           # Other 3D model formats
-├── generated/            # Auto-generated files (committed for designers)
-│   └── components/       # Generated component XML definitions
-│       ├── Transform.xml # Core transform component
-│       ├── LocomotionEnvironment.xml  # Locomotion component
-│       └── ...           # Other framework components
-├── metaspatial/          # Meta Spatial project files
-├── dist/                 # Build output (generated)
-├── index.html           # Main HTML file
-├── vite.config.js       # Vite configuration
-└── package.json         # Project dependencies
+│   └── index.js           # Main application entry point with SceneShowSystem
+├── dist/                  # Build output (generated)
+├── index.html            # Main HTML file
+├── vite.config.js        # Vite configuration
+└── package.json          # Project dependencies
 ```
+
+**Note**: This example focuses on code-based AR scene understanding and doesn't require static assets or Meta Spatial project files.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ and pnpm
+- Node.js 20.19.0+ and pnpm
 - HTTPS support for WebXR development
 
 ### Installation
 
 ```bash
-cd boilerplate
+cd scene-understanding
 pnpm install
 ```
 
@@ -58,63 +66,146 @@ pnpm preview
 
 The development server will start at `https://localhost:8081` with automatic HTTPS certificates.
 
-## 📦 Asset Organization
+**Important**: Scene understanding features require an AR-capable device (e.g., Meta Quest 3, Quest Pro) with plane detection, mesh detection, and anchor support.
 
-### WebXR-Optimized Asset Handling
+## 🔍 Scene Understanding System Overview
 
-This boilerplate uses Vite's `public/` directory for WebXR assets since they are:
+### Enabling Scene Understanding
 
-- Loaded at runtime via URLs (not imported as modules)
-- Large files that shouldn't be bundled or processed
-- Need direct URL access for asset loaders
-
-### Assets Directory Structure
-
-- **`public/gltf/`** - 3D models in GLTF/GLB format
-- **`public/glxf/`** - GLXF scene files containing component data
-- **`public/textures/`** - Images, textures, and visual assets (.png, .jpg, etc.)
-- **`public/audio/`** - Sound effects and music files
-- **`public/models/`** - Other 3D model formats
-
-### Asset Usage
+Configure your WebXR AR session with scene understanding features:
 
 ```javascript
-// Reference assets using root-relative paths (Vite serves public/ at root)
-const assets = {
-  scene: { url: '/glxf/my-scene.glxf', type: AssetType.GLXF },
-  model: { url: '/gltf/my-model.gltf', type: AssetType.GLTF },
-  texture: { url: '/textures/my-texture.png', type: AssetType.Texture },
-};
+World.create(document.getElementById('scene-container'), {
+  xr: {
+    sessionMode: SessionMode.ImmersiveAR,
+    features: {
+      hitTest: true,
+      planeDetection: { required: true },    // Enable plane detection
+      meshDetection: { required: true },     // Enable mesh detection
+      anchors: { required: true },           // Enable spatial anchors
+    },
+  },
+  features: {
+    grabbing: true,
+    sceneUnderstanding: true,  // Enable IWSDK scene understanding system
+  },
+});
 ```
 
-## 🔧 Component System
+### Scene Understanding Components
 
-### Generated Components
+The scene understanding system uses three main ECS components:
 
-The `generated/components/` directory contains XML definitions for all framework components. These files are:
+#### 1. XRPlane
 
-- **Generated automatically** during development
-- **Committed to version control** for designer/artist accessibility
-- **Used by Meta Spatial** for component integration
+Represents a detected real-world surface (floor, wall, table, etc.). See `immersive-web-sdk/packages/core/src/scene-understanding/plane.ts:32-42`
 
-### Generated Files Organization
+Planes are automatically created and updated by the `SceneUnderstandingSystem` and has an Object3D representing the Plane's geometry associated.
 
-The `generated/` folder organizes all auto-generated files:
+#### 2. XRMesh
 
-- **`generated/components/`** - Component XML definitions
-- **Future**: Schema files, type definitions, documentation, etc.
+Represents detected 3D geometry in the environment. See `immersive-web-sdk/packages/core/src/scene-understanding/mesh.ts:43-55`
 
-### Important Notes
+**Properties**:
+- `isBounded3D`: Whether this is a bounded object (true) or global mesh (false)
+- `semanticLabel`: Semantic label from the device (e.g., "wall", "couch", "global mesh")
+- `min`: Minimum bounding box corner `[x, y, z]`
+- `max`: Maximum bounding box corner `[x, y, z]`
+- `dimensions`: Size of the bounding box `[width, height, depth]`
 
-- All generated files should be committed to ensure the project works out-of-the-box
-- Designers and tech artists can use these without running build commands
-- Files are regenerated when components change during development
+Meshes are automatically created and updated by the `SceneUnderstandingSystem` has an Object3D representing the Mesh's geometry associated.
+
+#### 3. XRAnchor
+
+Marks an entity to be anchored at a fixed position in the real world (will not move after recentering the view). See `immersive-web-sdk/packages/core/src/scene-understanding/anchor.ts:35-45`
+
+**Properties**:
+- `attached`: Boolean indicating if the entity is attached to the anchor group, default `false`
+
+**Usage**:
+```javascript
+// Create an entity that stays fixed in the real world
+const entity = world.createTransformEntity(mesh);
+entity.addComponent(XRAnchor);
+```
+
+Objects with the `XRAnchor` component are automatically attached to a stable anchor point by the `SceneUnderstandingSystem`.
+
+
+### How Scene Understanding Works
+
+The `SceneUnderstandingSystem` (see `src/scene-understanding/scene-understanding-system.ts:72-408`) handles:
+
+1. **Feature Detection**: Checks which scene understanding features are enabled
+2. **Plane Tracking**: Updates detected planes each frame from `XRFrame.detectedPlanes`
+3. **Mesh Tracking**: Updates detected meshes each frame from `XRFrame.detectedMeshes`
+4. **Geometry Generation**: Creates Three.js geometry from plane polygons and mesh vertices
+5. **Anchor Management**: Creates and maintains spatial anchors for marked entities
+6. **Lifecycle Management**: Destroys entities when planes/meshes are no longer tracked
+
+## 💡 Best Practices & Tips
+
+### Device Requirements
+
+Scene understanding features require specific hardware capabilities. Always check `session.enabledFeatures` to verify which features are available.
+
+### Working with Meshes
+
+**Mesh Types**:
+- **Bounded meshes** (`isBounded3D: true`): Individual objects like furniture, walls
+- **Global mesh** (`isBounded3D: false`): Environment-wide mesh without semantic meaning
+
+**Best Practices**:
+- Use `semanticLabel` to identify what the mesh represents (e.g., "couch", "wall", "table")
+- Bounded meshes include useful bounding box data (`min`, `max`, `dimensions`)
+- Global meshes are useful for physics or collision but not for semantic understanding
+- Filter by `isBounded3D` to work with specific objects vs. the entire environment
+
+**Example: Finding Furniture**:
+```javascript
+this.queries.meshEntities.entities.forEach((meshEntity) => {
+  const label = meshEntity.getValue(XRMesh, 'semanticLabel');
+  const isBounded = meshEntity.getValue(XRMesh, 'isBounded3D');
+
+  if (isBounded && (label === 'couch' || label === 'table')) {
+    // This is a piece of furniture
+    const dimensions = meshEntity.getVectorView(XRMesh, 'dimensions');
+    console.log(`Found ${label} with size:`, dimensions);
+  }
+});
+```
+
+### Working with Anchors
+
+**Anchor Behavior**:
+- Anchors keep objects fixed in the real world even as the device tracking shifts
+- Perfect for persistent AR content that should stay in one place
+- The system maintains anchor stability by updating transforms automatically
+
+**Tips**:
+- Use anchors for important objects that must stay in a specific location
+- Can be combine with `DistanceGrabbable` to let users position objects precisely
+
+**Example: User-Placed Anchored Object**:
+```javascript
+// Let user grab and position an anchored object
+const entity = world.createTransformEntity(mesh);
+entity.addComponent(DistanceGrabbable);
+entity.addComponent(Interactable);
+entity.addComponent(XRAnchor);
+```
+
+### Performance Tips
+
+1. **Limit Mesh Rendering**: Only make meshes visible when needed (like on pointer hover or for development only)
+2. **Filter Bounded Meshes**: Use `where: [eq(XRMesh, 'isBounded3D', true)]` to ignore the global mesh
+3. **Simplify Geometry**: Consider creating simplified collision shapes instead of using full mesh geometry
 
 ## 🌐 WebXR Development
 
 ### HTTPS Requirements
 
-WebXR requires HTTPS for all features to work properly. This boilerplate includes:
+WebXR requires HTTPS for all features to work properly. This example includes:
 
 - Automatic HTTPS certificate generation via `vite-plugin-mkcert`
 - Self-signed certificates for local development
@@ -122,32 +213,47 @@ WebXR requires HTTPS for all features to work properly. This boilerplate include
 
 ### Testing on Devices
 
-```bash
-# Find your local IP
-ipconfig getifaddr en0  # macOS
-# or
-hostname -I             # Linux
+**For Meta Quest Devices**:
 
-# Access from VR headset
+1. Start the dev server:
+```bash
+pnpm dev
+```
+
+2. On your Quest device, open the browser and navigate to:
+```
 https://YOUR_LOCAL_IP:8081
 ```
 
+3. Accept the self-signed certificate warning
+
+4. Enter VR/AR mode to test scene understanding features
+
+**Important**: Scene understanding works best in well-lit environments with distinct surfaces. Walk around slowly to allow the device to scan your environment.
+
 ## 🛠 Customization
 
-### Vite Configuration
 
-The `vite.config.js` file includes:
+### Enabling Wireframe Toggle
 
-- HTTPS development server setup
-- Static asset copying configuration
-- Build optimization settings
-- Asset handling rules
+The `SceneUnderstandingSystem` has a built-in `showWireFrame` config option:
 
-### Adding New Assets
-
-1. Place assets in the appropriate `public/` subdirectory
-2. Reference them in your code using root-relative paths (e.g., `/gltf/model.gltf`)
-3. Assets are automatically served by Vite during development and copied to build output
+```javascript
+World.create(document.getElementById('scene-container'), {
+  xr: {
+    sessionMode: SessionMode.ImmersiveAR,
+    features: {
+      hitTest: true,
+      planeDetection: { required: true },    // Enable plane detection
+      meshDetection: { required: true },     // Enable mesh detection
+      anchors: { required: true },           // Enable spatial anchors
+    },
+  },
+  features: {
+    sceneUnderstanding: { showWireFrame: true },  // Enable IWSDK scene understanding system with wireframe enabled
+  },
+});
+```
 
 ## 📋 Scripts
 
@@ -157,12 +263,37 @@ The `vite.config.js` file includes:
 
 ## 🔗 Integration
 
-This boilerplate is designed to work seamlessly with:
+This example demonstrates integration with:
 
-- **Meta Spatial SDK** for component definitions
-- **WebXR browsers** for VR/AR development
-- **Framework tools** for component generation
-- **Asset pipelines** for 3D content creation
+- **IWSDK Scene Understanding System** - Automatic tracking and entity management
+- **IWSDK Grabbing System** - Interactive manipulation of anchored objects
+- **Meta Quest AR capabilities** - Real-world environment understanding
+
+### Related Examples
+
+- **Locomotion Example** - Learn about AR/VR navigation
+- **Physics Example** - Combine scene understanding with physics for realistic interactions
+- **Hit Test Example** - Place objects on detected surfaces using hit testing
+
+### Use Cases for Scene Understanding
+
+**Plane Detection**:
+- Furniture placement apps
+- AR games that need floor/table surfaces
+- Virtual interior design
+- Educational AR overlays on walls
+
+**Mesh Detection**:
+- Obstacle avoidance for AR navigation
+- Environment-aware lighting and shadows
+- Physics interactions with real objects
+- Semantic understanding for context-aware apps
+
+**Spatial Anchors**:
+- Persistent AR content that stays in place
+- Multi-user AR experiences with shared reference points
+- AR annotations on real-world objects
+- Virtual markers for navigation
 
 ## 📝 License
 
