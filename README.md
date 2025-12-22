@@ -13,46 +13,82 @@ The **Immersive Web SDK** makes building immersive web experiences as approachab
 
 **Same code, two experiences**: Run immersively in VR/AR headsets and automatically provide mouse-and-keyboard emulation on desktop browsers. No browser extensions, no special setup—anyone with a laptop can develop for the immersive web.
 
-## Quick Start
+## Getting Started
+
+Create a new project with a single command:
+
+```bash
+npm create @iwsdk@latest
+```
+
+Or install into an existing project:
+
+```bash
+npm install @iwsdk/core three
+```
+
+## Documentation
+
+For guides, concepts, and API reference, visit: **[https://iwsdk.dev](https://iwsdk.dev)**
+
+## Packages
+
+| Package                                                                    | Description                                       |
+| -------------------------------------------------------------------------- | ------------------------------------------------- |
+| [@iwsdk/core](./packages/core)                                             | Core SDK with ECS, systems, and WebXR integration |
+| [@iwsdk/create](./packages/create)                                         | CLI for scaffolding new projects                  |
+| [@iwsdk/glxf](./packages/glxf)                                             | GLXF scene format loader for Three.js             |
+| [@iwsdk/locomotor](./packages/locomotor)                                   | Locomotion engine for Three.js WebXR              |
+| [@iwsdk/xr-input](./packages/xr-input)                                     | WebXR input system for Three.js                   |
+| [@iwsdk/vite-plugin-iwer](./packages/vite-plugin-iwer)                     | WebXR emulator injection for development          |
+| [@iwsdk/vite-plugin-gltf-optimizer](./packages/vite-plugin-gltf-optimizer) | GLTF/GLB optimization during build                |
+| [@iwsdk/vite-plugin-uikitml](./packages/vite-plugin-uikitml)               | UIKitML to JSON compiler for spatial UI           |
+| [@iwsdk/vite-plugin-metaspatial](./packages/vite-plugin-metaspatial)       | Meta Spatial Editor integration                   |
+
+### Internal Packages
+
+| Package                                            | Description                             |
+| -------------------------------------------------- | --------------------------------------- |
+| [@iwsdk/starter-assets](./packages/starter-assets) | CDN-hosted templates and assets for CLI |
+
+## Development
 
 ```bash
 # Install dependencies
 pnpm install
 
-# Build and pack all packages
-pnpm run build:tgz
+# Build all packages as tgz files (for examples to consume)
+npm run build:tgz
 
-# Run example
-cd examples/locomotion && pnpm run fresh:dev
-```
+# Run an example (fresh install from local tgz packages)
+cd examples/locomotion && npm run fresh:dev
 
-## Development
-
-```bash
-# Lint and format code
+# Lint and format
 pnpm run lint
 pnpm run format
 
-# Build specific package
-pnpm --filter '@iwsdk/core' run build
+# Build a specific package
+pnpm --filter @iwsdk/core build
 ```
 
-## Documentation
+### Development Workflow
 
-For detailed information about using IWSDK, including step-by-step guides, architectural concepts, and complete API references, please visit our documentation site:
+The examples use `file:` dependencies pointing to `.tgz` files built from local packages. This simulates how end-users will consume the packages from npm.
 
-- **[IWSDK Documentation](https://facebook.github.io/immersive-web-sdk)**
+1. **`npm run build:tgz`** - Builds all packages in dependency order and creates `.tgz` archives
+2. **`npm run fresh:dev`** (in example) - Cleans `node_modules`, reinstalls from tgz files, and starts dev server
+
+This ensures examples always test against the latest local build.
 
 ## License
 
-IWSDK is licensed under the MIT License. For more details, see the [LICENSE](https://github.com/facebook/immersive-web-sdk/blob/main/LICENSE) file in this repository.
+IWSDK is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
 
 ## Contributing
 
-Your contributions are welcome! Please feel free to submit issues and pull requests. Before contributing, make sure to review our [Contributing Guidelines](https://github.com/facebook/immersive-web-sdk/blob/main/CONTRIBUTING.md) and [Code of Conduct](https://github.com/facebook/immersive-web-sdk/blob/main/CODE_OF_CONDUCT.md).
+Contributions are welcome! Please review our [Contributing Guidelines](./CONTRIBUTING.md) and [Code of Conduct](./CODE_OF_CONDUCT.md) before submitting issues or pull requests.
 
 ## Developer Terms
 
-- Open source Terms of Use - https://opensource.fb.com/legal/terms
-
-- Open source Privacy Policy - https://opensource.fb.com/legal/privacy
+- [Open Source Terms of Use](https://opensource.fb.com/legal/terms)
+- [Open Source Privacy Policy](https://opensource.fb.com/legal/privacy)

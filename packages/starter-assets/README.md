@@ -1,48 +1,58 @@
 # @iwsdk/starter-assets
 
-CDN-ready starter assets and Chef recipes for IWSDK. This package publishes a `dist/` folder containing:
+CDN-hosted starter templates and assets for the IWSDK project scaffolding CLI. This package provides the recipes and assets used by `@iwsdk/create`.
 
-- Assets under `dist/assets/<id>/{public|metaspatial}/...` where `<id>` is one of
-  - `vr-manual-js`, `vr-manual-ts`, `vr-metaspatial-js`, `vr-metaspatial-ts`
-  - `ar-manual-js`, `ar-manual-ts`, `ar-metaspatial-js`, `ar-metaspatial-ts`
-- `recipes/index.json` and one `recipes/<id>.json` per variant (Chef-only format).
+> **Note**: This is an internal package used by `@iwsdk/create`. You typically don't need to install it directly.
 
-CDN example paths:
+## What's Included
 
-- Base: `https://cdn.jsdelivr.net/npm/@iwsdk/starter-assets@<version>/dist`
-- Example asset: `.../assets/vr-manual-ts/public/gltf/robot/robot.gltf`
-- Recipes index: `.../recipes/index.json`
+- **Recipes** - Chef-compatible project templates for all IWSDK variants
+- **Assets** - GLTF models, textures, and other starter content
+- **Templates** - Pre-configured Vite projects for VR/AR development
 
-## Recipe Format (Chef)
+## Template Variants
 
-Each `recipes/<id>.json` is a pure Chef recipe with fields:
+| ID                  | Description                           |
+| ------------------- | ------------------------------------- |
+| `vr-manual-ts`      | VR + TypeScript + code-only scene     |
+| `vr-manual-js`      | VR + JavaScript + code-only scene     |
+| `vr-metaspatial-ts` | VR + TypeScript + Meta Spatial Editor |
+| `vr-metaspatial-js` | VR + JavaScript + Meta Spatial Editor |
+| `ar-manual-ts`      | AR + TypeScript + code-only scene     |
+| `ar-manual-js`      | AR + JavaScript + code-only scene     |
+| `ar-metaspatial-ts` | AR + TypeScript + Meta Spatial Editor |
+| `ar-metaspatial-js` | AR + JavaScript + Meta Spatial Editor |
 
-- `name`: human-readable variant name (e.g., `VR Manual (TS)`).
-- `version`: this package version.
-- `edits`: map of file paths to operations. Text files use `{ set: <contents> }`; binary/static assets use `{ url: <absolute-cdn-url> }`.
+## CDN URLs
 
-There are no extra fields like `files`, `remotes`, or `baseUrl` in the recipe files.
+Assets are served via jsDelivr:
 
-## Build
+```
+Base: https://cdn.jsdelivr.net/npm/@iwsdk/starter-assets@<version>/dist
+Recipes: .../recipes/index.json
+Assets: .../assets/<variant-id>/public/...
+```
 
-- Generate variants from `starter-template/` and stage assets + Chef recipes into `dist/`:
+## How It Works
 
+1. `@iwsdk/create` fetches `recipes/index.json` to get available templates
+2. User selects a variant through interactive prompts
+3. The CLI fetches the recipe JSON for that variant
+4. [@pmndrs/chef](https://github.com/pmndrs/chef) applies the recipe to scaffold the project
+5. Binary assets (GLTF, images) are fetched from CDN URLs in the recipe
+
+## Building (for contributors)
+
+```bash
+# Generate variants from starter-template and build assets
 pnpm --filter @iwsdk/starter-assets build
+```
 
 This runs:
 
-- `starter:sync` → writes variants to `packages/starter-assets/variants-src/*`
-- `scripts/build-assets.mjs` → emits `dist/assets/<id>/{public|metaspatial}/...` and `dist/recipes/*.json`, then removes `variants-src/`
+- `starter:sync` - Generates variant source files
+- `build-assets.mjs` - Creates `dist/assets/` and `dist/recipes/`
 
-## Publish
+## License
 
-- The published tarball includes `dist/` and `README.md`. The template and scripts are excluded.
-- Consumers should load the recipe JSON and pass it to Chef with `{ allowUrl: true }` so Chef fetches binary assets.
-
-## Local Template
-
-- The generator looks for `starter-template/` in two places:
-  1. `packages/starter-assets/starter-template/` (preferred)
-  2. `<repo-root>/starter-template/` (fallback)
-
-Move the template into this package later to fully encapsulate assets.
+MIT © Meta Platforms, Inc.

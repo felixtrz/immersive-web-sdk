@@ -23,7 +23,7 @@ A comprehensive Vite plugin suite for WebXR framework integration with Meta Spat
 ## Installation
 
 ```bash
-pnpm add -D @iwsdk/vite-plugin-metaspatial
+npm install -D @iwsdk/vite-plugin-metaspatial
 ```
 
 ## Usage
@@ -361,4 +361,4 @@ src/generate-glxf/
 
 ## License
 
-MIT
+MIT © Meta Platforms, Inc.

@@ -80,14 +80,14 @@ World.create(document.getElementById('scene-container'), {
     sessionMode: SessionMode.ImmersiveAR,
     features: {
       hitTest: true,
-      planeDetection: { required: true },    // Enable plane detection
-      meshDetection: { required: true },     // Enable mesh detection
-      anchors: { required: true },           // Enable spatial anchors
+      planeDetection: { required: true }, // Enable plane detection
+      meshDetection: { required: true }, // Enable mesh detection
+      anchors: { required: true }, // Enable spatial anchors
     },
   },
   features: {
     grabbing: true,
-    sceneUnderstanding: true,  // Enable IWSDK scene understanding system
+    sceneUnderstanding: true, // Enable IWSDK scene understanding system
   },
 });
 ```
@@ -107,6 +107,7 @@ Planes are automatically created and updated by the `SceneUnderstandingSystem` a
 Represents detected 3D geometry in the environment. See `immersive-web-sdk/packages/core/src/scene-understanding/mesh.ts:43-55`
 
 **Properties**:
+
 - `isBounded3D`: Whether this is a bounded object (true) or global mesh (false)
 - `semanticLabel`: Semantic label from the device (e.g., "wall", "couch", "global mesh")
 - `min`: Minimum bounding box corner `[x, y, z]`
@@ -120,9 +121,11 @@ Meshes are automatically created and updated by the `SceneUnderstandingSystem` h
 Marks an entity to be anchored at a fixed position in the real world (will not move after recentering the view). See `immersive-web-sdk/packages/core/src/scene-understanding/anchor.ts:35-45`
 
 **Properties**:
+
 - `attached`: Boolean indicating if the entity is attached to the anchor group, default `false`
 
 **Usage**:
+
 ```javascript
 // Create an entity that stays fixed in the real world
 const entity = world.createTransformEntity(mesh);
@@ -130,7 +133,6 @@ entity.addComponent(XRAnchor);
 ```
 
 Objects with the `XRAnchor` component are automatically attached to a stable anchor point by the `SceneUnderstandingSystem`.
-
 
 ### How Scene Understanding Works
 
@@ -152,16 +154,19 @@ Scene understanding features require specific hardware capabilities. Always chec
 ### Working with Meshes
 
 **Mesh Types**:
+
 - **Bounded meshes** (`isBounded3D: true`): Individual objects like furniture, walls
 - **Global mesh** (`isBounded3D: false`): Environment-wide mesh without semantic meaning
 
 **Best Practices**:
+
 - Use `semanticLabel` to identify what the mesh represents (e.g., "couch", "wall", "table")
 - Bounded meshes include useful bounding box data (`min`, `max`, `dimensions`)
 - Global meshes are useful for physics or collision but not for semantic understanding
 - Filter by `isBounded3D` to work with specific objects vs. the entire environment
 
 **Example: Finding Furniture**:
+
 ```javascript
 this.queries.meshEntities.entities.forEach((meshEntity) => {
   const label = meshEntity.getValue(XRMesh, 'semanticLabel');
@@ -178,15 +183,18 @@ this.queries.meshEntities.entities.forEach((meshEntity) => {
 ### Working with Anchors
 
 **Anchor Behavior**:
+
 - Anchors keep objects fixed in the real world even as the device tracking shifts
 - Perfect for persistent AR content that should stay in one place
 - The system maintains anchor stability by updating transforms automatically
 
 **Tips**:
+
 - Use anchors for important objects that must stay in a specific location
 - Can be combine with `DistanceGrabbable` to let users position objects precisely
 
 **Example: User-Placed Anchored Object**:
+
 ```javascript
 // Let user grab and position an anchored object
 const entity = world.createTransformEntity(mesh);
@@ -216,11 +224,13 @@ WebXR requires HTTPS for all features to work properly. This example includes:
 **For Meta Quest Devices**:
 
 1. Start the dev server:
+
 ```bash
 pnpm dev
 ```
 
 2. On your Quest device, open the browser and navigate to:
+
 ```
 https://YOUR_LOCAL_IP:8081
 ```
@@ -233,7 +243,6 @@ https://YOUR_LOCAL_IP:8081
 
 ## 🛠 Customization
 
-
 ### Enabling Wireframe Toggle
 
 The `SceneUnderstandingSystem` has a built-in `showWireFrame` config option:
@@ -244,13 +253,13 @@ World.create(document.getElementById('scene-container'), {
     sessionMode: SessionMode.ImmersiveAR,
     features: {
       hitTest: true,
-      planeDetection: { required: true },    // Enable plane detection
-      meshDetection: { required: true },     // Enable mesh detection
-      anchors: { required: true },           // Enable spatial anchors
+      planeDetection: { required: true }, // Enable plane detection
+      meshDetection: { required: true }, // Enable mesh detection
+      anchors: { required: true }, // Enable spatial anchors
     },
   },
   features: {
-    sceneUnderstanding: { showWireFrame: true },  // Enable IWSDK scene understanding system with wireframe enabled
+    sceneUnderstanding: { showWireFrame: true }, // Enable IWSDK scene understanding system with wireframe enabled
   },
 });
 ```
@@ -278,18 +287,21 @@ This example demonstrates integration with:
 ### Use Cases for Scene Understanding
 
 **Plane Detection**:
+
 - Furniture placement apps
 - AR games that need floor/table surfaces
 - Virtual interior design
 - Educational AR overlays on walls
 
 **Mesh Detection**:
+
 - Obstacle avoidance for AR navigation
 - Environment-aware lighting and shadows
 - Physics interactions with real objects
 - Semantic understanding for context-aware apps
 
 **Spatial Anchors**:
+
 - Persistent AR content that stays in place
 - Multi-user AR experiences with shared reference points
 - AR annotations on real-world objects

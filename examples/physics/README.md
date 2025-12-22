@@ -89,9 +89,9 @@ Enable physics in your world configuration:
 ```javascript
 World.create(document.getElementById('scene-container'), {
   features: {
-    physics: true,  // Enable Havok physics engine
-    grabbing: true,  // Enable object grabbing
-    locomotion: true,  // Enable player movement
+    physics: true, // Enable Havok physics engine
+    grabbing: true, // Enable object grabbing
+    locomotion: true, // Enable player movement
   },
 });
 ```
@@ -105,11 +105,13 @@ The physics system uses three main ECS components:
 Defines the motion type and physical behavior of an entity. See `immersive-web-sdk/packages/core/src/physics/physicsBody.ts:47-66`
 
 **Motion Types** (`PhysicsState`):
+
 - **`Static`**: Immovable objects like walls and floors. Affects other bodies but never moves.
 - **`Dynamic`**: Objects that respond to forces, collisions, and gravity.
 - **`Kinematic`**: Programmatically controlled objects that push dynamic bodies but aren't affected by physics.
 
 **Properties**:
+
 - `state`: Motion type (default: `PhysicsState.Dynamic`)
 - `linearDamping`: Reduces linear velocity over time (default: 0.0)
 - `angularDamping`: Reduces angular velocity over time (default: 0.0)
@@ -117,6 +119,7 @@ Defines the motion type and physical behavior of an entity. See `immersive-web-s
 - `centerOfMass`: Custom center of mass offset (default: auto-calculated)
 
 **Example**:
+
 ```javascript
 entity.addComponent(PhysicsBody, {
   state: PhysicsState.Dynamic,
@@ -130,6 +133,7 @@ entity.addComponent(PhysicsBody, {
 Defines the collision shape and material properties. See `immersive-web-sdk/packages/core/src/physics/physicsShape.ts:80-100`
 
 **Shape Types** (`PhysicsShapeType`):
+
 - **`Sphere`**: Defined by radius in `dimensions[0]`. Efficient for round objects.
 - **`Box`**: Defined by `[width, height, depth]` in dimensions. Good for rectangular objects.
 - **`Cylinder`**: Defined by radius in `dimensions[0]` and height in `dimensions[1]`.
@@ -138,18 +142,20 @@ Defines the collision shape and material properties. See `immersive-web-sdk/pack
 - **`Auto`**: Automatically detects the best shape from Three.js geometry (SphereGeometry → Sphere, BoxGeometry → Box, etc.)
 
 **Material Properties**:
+
 - `density`: Mass per unit volume (default: 1.0)
 - `restitution`: Bounciness, 0 = no bounce, 1 = perfect bounce (default: 0.0)
 - `friction`: Surface friction (default: 0.5)
 
 **Example**:
+
 ```javascript
 entity.addComponent(PhysicsShape, {
   shape: PhysicsShapeType.Sphere,
-  dimensions: [0.5, 0, 0],  // radius = 0.5 meters
+  dimensions: [0.5, 0, 0], // radius = 0.5 meters
   density: 2.0,
-  restitution: 0.8,  // bouncy
-  friction: 0.1,     // slippery
+  restitution: 0.8, // bouncy
+  friction: 0.1, // slippery
 });
 ```
 
@@ -158,15 +164,17 @@ entity.addComponent(PhysicsShape, {
 Applies one-time forces or velocity changes to a physics body. The component is automatically removed after application. See `immersive-web-sdk/packages/core/src/physics/physicsManipulation.ts:37-48`
 
 **Properties**:
+
 - `force`: Impulse force vector `[x, y, z]`
 - `linearVelocity`: Set linear velocity directly `[x, y, z]`
 - `angularVelocity`: Set angular velocity directly `[x, y, z]`
 
 **Example**:
+
 ```javascript
 // Apply an impulse force
 entity.addComponent(PhysicsManipulation, {
-  force: [10, 5, 0],  // Push right and up
+  force: [10, 5, 0], // Push right and up
 });
 ```
 
@@ -193,10 +201,10 @@ entity.addComponent(PhysicsShape, {
   dimensions: [0.2],
 });
 entity.addComponent(PhysicsBody, {
-  state: PhysicsState.Dynamic
+  state: PhysicsState.Dynamic,
 });
 entity.addComponent(PhysicsManipulation, {
-  force: [10, 1, 1]
+  force: [10, 1, 1],
 });
 ```
 

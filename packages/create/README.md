@@ -1,42 +1,149 @@
-# @iwsdk/create
+<h1 align="center">create-iwsdk</h1>
 
-Interactive CLI to scaffold Immersive Web SDK starter apps. Intended to be invoked via:
+<p align="center">
+    <a href="https://www.npmjs.com/package/@iwsdk/create"><img src="https://badgen.net/npm/v/@iwsdk/create/?icon=npm&color=orange" alt="npm version" /></a>
+    <a href="https://www.npmjs.com/package/@iwsdk/create"><img src="https://badgen.net/npm/dt/@iwsdk/create" alt="npm download" /></a>
+    <a href="https://raw.githubusercontent.com/facebook/immersive-web-sdk/main/LICENSE"><img src="https://badgen.net/github/license/facebook/immersive-web-sdk/" alt="license" /></a>
+</p>
 
-- `npm create @iwsdk@latest`
-- `pnpm dlx @iwsdk/create@latest`
+<p align="center"><strong>Scaffold a new Immersive Web SDK project in seconds.</strong></p>
 
-This package is CLI-only: no programmatic API exports. TypeScript sources live in `src/` and are bundled to `dist/` with Rollup.
+## Quick Start
 
-The CLI uses @pmndrs/chef to apply recipes fetched from the CDN (no local fallback). Recipes live at:
+```bash
+npm create @iwsdk@latest
+```
 
-- `${ASSETS_BASE}/recipes/index.json` (default base: `https://cdn.jsdelivr.net/npm/@iwsdk/starter-assets@<version>/dist`, falls back to `@latest` if version not yet indexed)
-- `${ASSETS_BASE}/recipes/<variant>.recipe.json`
+Or with other package managers:
 
-## Usage (local dev)
+```bash
+# pnpm
+pnpm create @iwsdk@latest
 
-- Build once: `pnpm --filter @iwsdk/create build`
-- Watch mode: `pnpm --filter @iwsdk/create dev`
+# yarn
+yarn create @iwsdk
 
-The CLI fetches recipes and assets from jsDelivr's npm CDN. By default, it uses the same version as the CLI (e.g., `https://cdn.jsdelivr.net/npm/@iwsdk/starter-assets@0.2.1/dist`), falling back to `@latest` if that version isn't indexed yet. Override with:
+# bun
+bun create @iwsdk
+```
 
-- `--assets-base <url>` or env `IWSDK_ASSET_BASE` (e.g., your own CDN root that serves `/recipes` and `/assets`)
+## Interactive Prompts
 
-Notes:
+The CLI will guide you through:
 
-- Network required during scaffold; Chef downloads binary assets from the CDN.
-- Local fallback recipes and the `run-recipe` dev helper have been removed in favor of Chef-only execution.
+1. **Project name** - Directory name for your new project
+2. **Language** - TypeScript or JavaScript
+3. **Platform** - VR (Virtual Reality) or AR (Augmented Reality)
+4. **XR Features** - Hand tracking, layers, anchors, hit-test, plane/mesh detection (tri-state: No/Optional/Required)
+5. **SDK Features** - Locomotion (VR), Scene Understanding (AR), Grabbing, Physics
+6. **Meta Spatial Editor** - Optional visual scene authoring integration
+7. **Git & Install** - Initialize git repo and install dependencies
 
-## Module Layout
+## What You Get
 
-- `src/cli.ts` — entrypoint: parses flags, runs prompts, selects recipe, applies edits, scaffolds the project, optionally installs deps, and prints next steps.
-- `src/prompts.ts` — all interactive questions and defaults.
-- `src/recipes.ts` — tiny fetch helpers (`DEFAULT_ASSETS_BASE`, `fetchRecipesIndex`, `fetchRecipeByFileName`). Internal use only.
-- `src/scaffold.ts` — wraps Chef’s `buildProject` and writes files to disk with status spinners.
-- `src/installer.ts` — installs dependencies with npm and prints next steps.
-- `src/types.ts` — shared types (`VariantId`, `TriState`, `PromptResult`).
+A fully configured project with:
 
-There is no `index.ts` and no exported library API.
+- ⚡ **Vite** - Fast dev server with HMR
+- 🎮 **WebXR Emulator** - Develop without VR hardware
+- 📦 **GLTF Optimization** - Automatic asset compression
+- 🔒 **HTTPS** - Required for WebXR, auto-configured
+- 🏗️ **Meta Spatial Editor** - Visual scene authoring (optional)
 
-## Publishing
+## Example
 
-This package is public under the `@iwsdk` scope. Ensure the version is bumped and `pnpm -r build` passes before publishing. Recipes and heavy assets are not bundled here; they live in `@iwsdk/starter-assets`.
+```bash
+$ npm create @iwsdk@latest
+
+===============================================
+IWSDK Create CLI v0.2.2
+Node v20.19.0
+
+? Project name › iwsdk-app
+? Which language do you want to use? › TypeScript
+? What type of experience are you building? › Virtual Reality
+? Enable Hand Tracking? › Optional
+? Enable WebXR Layers? › Optional
+? Enable locomotion? › Yes
+? Deploy locomotion engine on a Worker? › Yes (recommended)
+? Enable grabbing (one/two-hand, distance)? › Yes
+? Enable physics simulation (Havok)? › No
+? Enable Meta Spatial Editor integration? › No (Can change later)
+? Set up a Git repository? › Yes
+? Install dependencies now? › Yes
+```
+
+## Command Line Options
+
+```bash
+# Provide project name directly
+npm create @iwsdk@latest my-app
+
+# Skip all prompts and use defaults
+npm create @iwsdk@latest my-app -- -y
+
+# Use custom CDN for recipes/assets
+npm create @iwsdk@latest -- --assets-base https://my-cdn.com/iwsdk
+```
+
+| Flag                  | Description                                              |
+| --------------------- | -------------------------------------------------------- |
+| `[name]`              | Project name (first positional argument)                 |
+| `-y, --yes`           | Skip prompts and use defaults (VR + TypeScript + manual) |
+| `--assets-base <url>` | Custom CDN base URL for recipes and assets               |
+
+## Generated Templates
+
+Based on your choices, one of these variants is generated:
+
+| Template ID         | Description                           |
+| ------------------- | ------------------------------------- |
+| `vr-manual-ts`      | VR + TypeScript + code-only scene     |
+| `vr-manual-js`      | VR + JavaScript + code-only scene     |
+| `vr-metaspatial-ts` | VR + TypeScript + Meta Spatial Editor |
+| `vr-metaspatial-js` | VR + JavaScript + Meta Spatial Editor |
+| `ar-manual-ts`      | AR + TypeScript + code-only scene     |
+| `ar-manual-js`      | AR + JavaScript + code-only scene     |
+| `ar-metaspatial-ts` | AR + TypeScript + Meta Spatial Editor |
+| `ar-metaspatial-js` | AR + JavaScript + Meta Spatial Editor |
+
+## Requirements
+
+- Node.js 20.19.0 or higher
+
+## Documentation
+
+For guides and tutorials, visit: **[https://iwsdk.dev](https://iwsdk.dev)**
+
+## License
+
+MIT © Meta Platforms, Inc.
+
+---
+
+<details>
+<summary><strong>Development (for contributors)</strong></summary>
+
+### Local Development
+
+```bash
+# Build the CLI
+pnpm --filter @iwsdk/create build
+
+# Run locally
+pnpm --filter @iwsdk/create dev
+```
+
+### Module Layout
+
+- `src/cli.ts` — Entrypoint: parses flags, runs prompts, scaffolds project
+- `src/prompts.ts` — Interactive questions and defaults
+- `src/recipes.ts` — Fetch helpers for CDN-hosted recipes
+- `src/scaffold.ts` — Wraps Chef's `buildProject` and writes files
+- `src/installer.ts` — Dependency installation and next steps
+- `src/types.ts` — Shared types (`VariantId`, `TriState`, `PromptResult`)
+
+### How It Works
+
+The CLI uses [@pmndrs/chef](https://github.com/pmndrs/chef) to apply recipes fetched from jsDelivr CDN. Recipes and assets live in the `@iwsdk/starter-assets` package.
+
+</details>

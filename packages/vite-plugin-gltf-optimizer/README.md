@@ -14,7 +14,7 @@ A Vite plugin for optimizing GLTF/GLB files during build using gltf-transform. P
 ## Installation
 
 ```bash
-pnpm add -D @iwsdk/vite-plugin-gltf-optimizer
+npm install -D @iwsdk/vite-plugin-gltf-optimizer
 ```
 
 ## Quick Start
@@ -228,4 +228,4 @@ const options: GLTFOptimizerOptions = {
 
 ## License
 
-MIT
+MIT © Meta Platforms, Inc.
