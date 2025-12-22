@@ -19,11 +19,11 @@ The **Immersive Web SDK** makes building immersive web experiences as approachab
 # Install dependencies
 pnpm install
 
-# Build all packages
-pnpm run build:all
+# Build and pack all packages
+pnpm run build:tgz
 
 # Run example
-cd examples/locomotion && pnpm run dev
+cd examples/locomotion && pnpm run fresh:dev
 ```
 
 ## Development
