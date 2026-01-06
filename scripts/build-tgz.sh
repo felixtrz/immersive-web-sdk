@@ -11,6 +11,13 @@ set -e
 
 echo "🚀 Building standalone tgz packages..."
 
+# Detect CI environment and set pnpm install flags
+PNPM_INSTALL_FLAGS=""
+if [ -n "$CI" ] || [ -n "$GITHUB_ACTIONS" ]; then
+    echo "🔍 CI environment detected, using --no-frozen-lockfile"
+    PNPM_INSTALL_FLAGS="--no-frozen-lockfile"
+fi
+
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 UNAME=$(uname)
 if [[ "$UNAME" == CYGWIN* || "$UNAME" == MINGW* ]]; then
@@ -144,7 +151,7 @@ build_root_packages() {
         
         # Install the file dependencies
         echo "   📥 Installing file dependencies..."
-        pnpm install
+        pnpm install $PNPM_INSTALL_FLAGS
         
         # Clean and build
         rm -rf lib dist build *.tgz
@@ -164,7 +171,7 @@ build_root_packages() {
         # Restore original package.json and reinstall workspace dependencies
         echo "   🔄 Restoring workspace dependencies..."
         restore_package_json "$package_dir"
-        pnpm install --silent
+        pnpm install --silent $PNPM_INSTALL_FLAGS
     done
 }
 
@@ -178,7 +185,7 @@ cleanup() {
         if [ -f "$package_dir/package.json.backup" ]; then
             restore_package_json "$package_dir"
             cd "$package_dir"
-            pnpm install --silent
+            pnpm install --silent $PNPM_INSTALL_FLAGS
         fi
     done
 }

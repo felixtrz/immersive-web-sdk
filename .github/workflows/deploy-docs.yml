@@ -44,9 +44,6 @@ jobs:
       - name: Build SDK packages
         run: pnpm build:tgz
 
-      - name: Reinstall dependencies after tgz build
-        run: pnpm install --no-frozen-lockfile
-
       - name: Build examples with Meta Spatial Editor CLI
         run: bash ./scripts/build-examples.sh
 
