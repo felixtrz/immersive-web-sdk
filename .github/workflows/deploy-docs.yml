@@ -41,12 +41,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build SDK packages
-        run: pnpm build:tgz
-
-      - name: Build examples with Meta Spatial Editor CLI
-        run: bash ./scripts/build-examples.sh
-
       - name: Build documentation
         run: pnpm docs:build
 
