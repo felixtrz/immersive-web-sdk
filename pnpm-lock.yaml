@@ -196,6 +196,13 @@ importers:
       three-mesh-bvh:
         specifier: ^0.9.1
         version: 0.9.2(super-three@0.181.0)
+    devDependencies:
+      '@vitest/coverage-v8':
+        specifier: ^2.1.8
+        version: 2.1.9(vitest@2.1.9(@types/node@20.19.25)(terser@5.44.1))
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@20.19.25)(terser@5.44.1)
 
   packages/starter-assets:
     devDependencies:
@@ -248,6 +255,12 @@ importers:
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
+      '@vitest/coverage-v8':
+        specifier: ^2.1.8
+        version: 2.1.9(vitest@2.1.9(@types/node@20.19.25)(terser@5.44.1))
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@20.19.25)(terser@5.44.1)
 
   packages/vite-plugin-iwer:
     dependencies:
@@ -303,6 +316,12 @@ importers:
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
+      '@vitest/coverage-v8':
+        specifier: ^2.1.8
+        version: 2.1.9(vitest@2.1.9(@types/node@20.19.25)(terser@5.44.1))
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@20.19.25)(terser@5.44.1)
 
   packages/vite-plugin-uikitml:
     dependencies:
@@ -5337,7 +5356,7 @@ snapshots:
 
   '@types/wrap-ansi@8.1.0':
     dependencies:
-      wrap-ansi: 8.1.0
+      wrap-ansi: 9.0.2
 
   '@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)':
     dependencies:

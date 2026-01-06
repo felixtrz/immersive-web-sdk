@@ -8,11 +8,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      include: [
-        'src/transform/**/*.ts',
-        'src/physics/utils.ts',
-        'src/camera/camera-utils.ts',
-      ],
+      include: ['src/physics/physics-utils.ts', 'src/physics/math-utils.ts'],
       exclude: ['**/*.test.ts', '**/*.d.ts'],
     },
   },

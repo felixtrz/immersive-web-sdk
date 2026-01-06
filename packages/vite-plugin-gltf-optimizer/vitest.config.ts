@@ -8,11 +8,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      include: [
-        'src/transform/**/*.ts',
-        'src/physics/utils.ts',
-        'src/camera/camera-utils.ts',
-      ],
+      include: ['src/compression-mapper.ts', 'src/preset-manager.ts'],
       exclude: ['**/*.test.ts', '**/*.d.ts'],
     },
   },
