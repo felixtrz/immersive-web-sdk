@@ -12,7 +12,10 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c --watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [
     "vite",
@@ -39,7 +42,9 @@
   },
   "devDependencies": {
     "@types/draco3dgltf": "^1.4.3",
-    "@types/fs-extra": "^11.0.4"
+    "@types/fs-extra": "^11.0.4",
+    "vitest": "^2.1.8",
+    "@vitest/coverage-v8": "^2.1.8"
   },
   "peerDependencies": {
     "vite": "^7.0.0"
