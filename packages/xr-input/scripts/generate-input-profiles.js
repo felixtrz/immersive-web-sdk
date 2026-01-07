@@ -64,6 +64,12 @@ function toCamelCase(str) {
 }
 
 async function generateInputProfiles() {
+  // Check if the generated file already exists (skip network fetch)
+  if (fs.existsSync(OUTPUT_FILE)) {
+    console.log(`✅ ${OUTPUT_FILE} already exists, skipping generation`);
+    return;
+  }
+
   try {
     console.log('Fetching profiles list...');
     const profilesList = await fetchJson(`${CDN_BASE_URL}/profilesList.json`);
