@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/** Camera facing direction constants. @category Camera */
 export const CameraFacing = {
   Back: 'back',
   Front: 'front',
@@ -13,6 +14,7 @@ export const CameraFacing = {
 
 export type CameraFacingType = (typeof CameraFacing)[keyof typeof CameraFacing];
 
+/** Information about an available camera device. @category Camera */
 export interface CameraDeviceInfo {
   deviceId: string;
   label: string;
@@ -20,7 +22,8 @@ export interface CameraDeviceInfo {
 }
 
 /**
- * Camera stream state lifecycle
+ * Camera stream state lifecycle.
+ * @category Camera
  */
 export const CameraState = {
   Inactive: 'inactive', // Not started

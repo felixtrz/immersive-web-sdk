@@ -15,24 +15,40 @@ import {
 } from 'three';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-// Interface for any loader with loadAsync method
+/** Interface for any loader with loadAsync method. */
 interface GLTFLoaderLike {
   loadAsync(url: string): Promise<GLTF>;
 }
 
-// GLXF interfaces
+/**
+ * Reference to a GLTF asset within a GLXF file.
+ * @category Scene
+ */
 export interface GLXFAsset {
+  /** URI path to the GLTF asset. */
   uri: string;
+  /** Optional display name for the asset. */
   name?: string;
 }
 
+/**
+ * Node definition within a GLXF scene graph.
+ * @category Scene
+ */
 export interface GLXFNode {
+  /** Optional node name. */
   name?: string;
+  /** Index into the assets array for the GLTF to instantiate. */
   asset?: number;
+  /** Local position [x, y, z]. */
   translation?: [number, number, number];
+  /** Local rotation quaternion [x, y, z, w]. */
   rotation?: [number, number, number, number];
+  /** Local scale [x, y, z]. */
   scale?: [number, number, number];
+  /** Indices of child nodes. */
   children?: number[];
+  /** Extended metadata including Meta Spatial Editor data. */
   extras?: {
     meta_spatial?: {
       entity_id?: string;
@@ -42,28 +58,72 @@ export interface GLXFNode {
   };
 }
 
+/**
+ * Scene definition containing root node indices.
+ * @category Scene
+ */
 export interface GLXFScene {
+  /** Indices of root nodes in this scene. */
   nodes: number[];
 }
 
+/**
+ * Raw GLXF file data structure.
+ * @category Scene
+ */
 export interface GLXFData {
+  /** Array of GLTF asset references. */
   assets: GLXFAsset[];
+  /** Array of node definitions. */
   nodes: GLXFNode[];
+  /** Array of scene definitions. */
   scenes: GLXFScene[];
+  /** Index of the default scene. */
   scene?: number;
+  /** GLXF format version info. */
   asset: {
     minVersion: string;
     version: string;
   };
 }
 
+/**
+ * Loaded and parsed GLXF result.
+ * @category Scene
+ */
 export interface GLXF {
+  /** Loaded GLTF assets. */
   assets: GLTF[];
+  /** Instantiated Object3D nodes. */
   nodes: Object3D[];
+  /** Scene groups containing root nodes. */
   scenes: Group[];
+  /** The active/default scene. */
   scene: Group;
 }
 
+/**
+ * Loader for GLXF (GL Transmission Format Extended) scene composition files.
+ *
+ * GLXF is a Meta-developed format that extends GLTF by supporting:
+ * - Multiple GLTF asset references in a single composition
+ * - Scene hierarchy with transforms
+ * - Meta Spatial Editor component metadata
+ *
+ * @remarks
+ * - Follows Three.js Loader conventions (load, loadAsync, parse).
+ * - Automatically resolves and loads referenced GLTF assets.
+ * - Preserves Meta Spatial Editor metadata in `userData.meta_spatial`.
+ *
+ * @example
+ * ```ts
+ * const loader = new GLXFLoader();
+ * const glxf = await loader.loadAsync('/scenes/level.glxf');
+ * scene.add(glxf.scene);
+ * ```
+ *
+ * @category Scene
+ */
 export class GLXFLoader extends Loader<GLXF> {
   private gltfLoader: GLTFLoaderLike;
 
@@ -72,6 +132,14 @@ export class GLXFLoader extends Loader<GLXF> {
     this.gltfLoader = new GLTFLoader(manager);
   }
 
+  /**
+   * Loads a GLXF file and all referenced GLTF assets.
+   *
+   * @param url URL to the GLXF file.
+   * @param onLoad Callback with loaded GLXF result.
+   * @param onProgress Optional progress callback.
+   * @param onError Optional error callback.
+   */
   load(
     url: string,
     onLoad: (glxf: GLXF) => void,
@@ -114,6 +182,13 @@ export class GLXFLoader extends Loader<GLXF> {
     );
   }
 
+  /**
+   * Loads a GLXF file asynchronously.
+   *
+   * @param url URL to the GLXF file.
+   * @param onProgress Optional progress callback.
+   * @returns Promise resolving to the loaded GLXF.
+   */
   loadAsync(
     url: string,
     onProgress?: (event: ProgressEvent) => void,
@@ -123,6 +198,14 @@ export class GLXFLoader extends Loader<GLXF> {
     });
   }
 
+  /**
+   * Parses GLXF JSON text and loads referenced GLTF assets.
+   *
+   * @param text GLXF JSON string.
+   * @param path Base path for resolving asset URIs.
+   * @param onLoad Callback with parsed GLXF result.
+   * @param onError Optional error callback.
+   */
   parse(
     text: string,
     path: string,
@@ -189,12 +272,25 @@ export class GLXFLoader extends Loader<GLXF> {
     }
   }
 
+  /**
+   * Parses GLXF JSON text asynchronously.
+   *
+   * @param text GLXF JSON string.
+   * @param path Base path for resolving asset URIs.
+   * @returns Promise resolving to the parsed GLXF.
+   */
   parseAsync(text: string, path: string): Promise<GLXF> {
     return new Promise((resolve, reject) => {
       this.parse(text, path, resolve, reject);
     });
   }
 
+  /**
+   * Sets a custom GLTF loader for loading referenced assets.
+   *
+   * @param gltfLoader Custom loader implementing loadAsync.
+   * @returns This loader for chaining.
+   */
   setGLTFLoader(gltfLoader: GLTFLoaderLike): this {
     this.gltfLoader = gltfLoader;
     return this;

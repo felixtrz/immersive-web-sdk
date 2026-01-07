@@ -122,6 +122,16 @@ function extractSchema(obj) {
         if (expr.kind === ts.SyntaxKind.TrueKeyword) return 'true';
         if (expr.kind === ts.SyntaxKind.FalseKeyword) return 'false';
         if (ts.isIdentifier(expr)) return expr.text;
+        // Handle prefix unary expressions like -Infinity, -1, etc.
+        if (ts.isPrefixUnaryExpression(expr)) {
+          const op =
+            expr.operator === ts.SyntaxKind.MinusToken
+              ? '-'
+              : expr.operator === ts.SyntaxKind.PlusToken
+                ? '+'
+                : '';
+          return op + toStr(expr.operand);
+        }
         if (ts.isPropertyAccessExpression(expr))
           return `${toStr(expr.expression)}.${expr.name.text}`;
         if (ts.isArrayLiteralExpression(expr))
@@ -166,8 +176,10 @@ function mapTypeName(t) {
     )
     .replace(/Types\.Boolean\b/g, 'boolean')
     .replace(/Types\.Vec3\b/g, '[number, number, number]')
+    .replace(/Types\.Vec4\b/g, '[number, number, number, number]')
     .replace(/Types\.Object\b/g, 'object')
     .replace(/Types\.Enum\b/g, 'enum')
+    .replace(/Types\.Entity\b/g, 'Entity')
     .replace(/^Types\./, '');
 }
 
@@ -573,9 +585,12 @@ async function rewriteAllComponentPages() {
         const sTrim = summary.trim().replace(/\s+/g, ' ');
         const lc = sTrim.charAt(0).toLowerCase() + sTrim.slice(1);
         const isArticle = /^(a|an|the|this)\b/i.test(sTrim);
-        const startsWithComponent = /^((a|an|the)\s+)?component\b/i.test(sTrim);
+        const startsWithComponent = /^component\b/i.test(sTrim);
+        const startsWithArticleComponent =
+          /^(a|an|the)\s+component\b/i.test(sTrim);
         let intro;
-        if (startsWithComponent) intro = `${varName} is ${lc}`;
+        if (startsWithArticleComponent) intro = `${varName} is ${lc}`;
+        else if (startsWithComponent) intro = `${varName} is a ${lc}`;
         else if (isArticle) intro = `${varName} is ${lc}`;
         else intro = `${varName} is a component that ${lc}`;
         lines.push(intro.endsWith('.') ? intro : intro + '.', '');

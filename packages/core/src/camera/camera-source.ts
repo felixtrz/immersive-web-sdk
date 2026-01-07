@@ -9,8 +9,9 @@ import { Types, createComponent } from '../ecs/index.js';
 import { CameraFacing, CameraState } from './types.js';
 
 /**
- * CameraSource - Component for accessing device cameras
- * Provides VideoTexture for rendering and HTMLVideoElement for advanced use
+ * Component for accessing device cameras.
+ * Provides VideoTexture for rendering and HTMLVideoElement for advanced use.
+ * @category Camera
  */
 export const CameraSource = createComponent(
   'CameraSource',

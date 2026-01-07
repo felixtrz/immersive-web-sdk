@@ -14,8 +14,9 @@ import {
 } from './types.js';
 
 /**
- * CameraUtils - Static utilities for camera discovery and selection
- * Handles permission requests and device enumeration with caching
+ * Static utilities for camera discovery and selection.
+ * Handles permission requests and device enumeration with caching.
+ * @category Camera
  */
 export class CameraUtils {
   private static cachedDevices: CameraDeviceInfo[] | null = null;

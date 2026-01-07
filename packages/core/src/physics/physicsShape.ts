@@ -35,8 +35,11 @@ export const PhysicsShapeType = {
   Auto: 'Auto',
 } as const;
 
+/** Default density for physics shapes. @category Physics */
 export const DEFAULT_DENSITY = 1.0;
+/** Default restitution (bounciness) for physics shapes. @category Physics */
 export const DEFAULT_RESTITUTION = 0.0;
+/** Default friction for physics shapes. @category Physics */
 export const DEFAULT_FRICTION = 0.5;
 
 /**

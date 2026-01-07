@@ -227,24 +227,16 @@ export class World extends ElicsWorld {
   }
 
   /**
-   * Initialize a new WebXR world with all required systems and setup
-   *
-   * @param sceneContainer - HTML container for the renderer canvas
-   * @param assets - Asset manifest for preloading
-   * @param options - Configuration options for the world
-   * @returns Promise that resolves to the initialized World instance
-   */
-  /**
    * Initialize a new WebXR world with renderer, scene, default systems, and optional level.
    *
    * @param container HTML container to which the renderer canvas will be appended.
    * @param options Runtime configuration, see {@link WorldOptions}.
-   * @returns A promise that resolves to the initialized {@link World}.
+   * @returns A promise that resolves to the initialized World.
    *
    * @remarks
    * - This call enables the Input, UI and Audio systems by default.
-   * - Use {@link WorldOptions.features} to enable Locomotion or Grabbing.
-   * - If {@link WorldOptions.level} is provided, the LevelSystem will load it after assets are preloaded.
+   * - Use `WorldOptions.features` to enable Locomotion or Grabbing.
+   * - If `WorldOptions.level` is provided, the LevelSystem will load it after assets are preloaded.
    * @see /getting-started/01-hello-xr
    */
   static create(

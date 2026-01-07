@@ -123,17 +123,9 @@ export type WorldOptions = {
 };
 
 /**
- * Initialize a new WebXR world with all required systems and setup
- *
- * @param sceneContainer - HTML container for the renderer canvas
- * @param assets - Asset manifest for preloading
- * @param options - Configuration options for the world
- * @returns Promise that resolves to the initialized World instance
- */
-/**
  * Initialize a new WebXR world with all required systems and setup.
  *
- * @param sceneContainer HTML container for the renderer canvas.
+ * @param container HTML container for the renderer canvas.
  * @param options Configuration options for the world.
  * @returns Promise that resolves to the initialized {@link World} instance.
  *

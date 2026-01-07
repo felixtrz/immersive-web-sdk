@@ -26,15 +26,31 @@ interface InputSourceData {
   inputSource: XRInputSource;
   isPrimary: boolean;
 }
+
+/**
+ * Types of XR input devices supported.
+ * @category Input
+ */
 export enum XRInputDeviceType {
+  /** Physical motion controller. */
   Controller = 'controller',
+  /** Hand tracking input. */
   Hand = 'hand',
 }
 
+/**
+ * Interface for loading GLTF assets (controller/hand models).
+ * @category Input
+ */
 export interface XRAssetLoader {
+  /** Loads a GLTF asset from the given path. */
   loadGLTF(assetPath: string): Promise<GLTF>;
 }
 
+/**
+ * Default asset loader using Three.js GLTFLoader.
+ * @category Input
+ */
 export const DefaultXRAssetLoader = {
   gltfLoader: new GLTFLoader(),
   async loadGLTF(assetPath: string): Promise<GLTF> {
@@ -42,35 +58,93 @@ export const DefaultXRAssetLoader = {
   },
 };
 
+/**
+ * Configuration for an XR input device (controller or hand).
+ * @category Input
+ */
 export interface XRInputDeviceConfig {
+  /** Which hand this device is for. */
   handedness: XRHandedness;
+  /** Type of input device. */
   type: XRInputDeviceType;
+  /** Whether this device is enabled. */
   enabled?: boolean;
+  /** Custom visual implementation class. */
   visualClass?: VisualConstructor<VisualImplementation>;
 }
 
+/**
+ * Settings for XR pointer behavior.
+ * @category Input
+ */
 export interface XRPointerSettings {
+  /** Whether pointers are enabled. */
   enabled?: boolean;
 }
 
+/**
+ * Options for creating an XRInputManager.
+ * @category Input
+ */
 export interface XRInputOptions {
+  /** The Three.js camera used for rendering. */
   camera: PerspectiveCamera;
+  /** The Three.js scene to add input visuals to. */
   scene: Scene;
+  /** Custom asset loader for controller/hand models. */
   assetLoader?: XRAssetLoader;
+  /** Configuration for input devices. */
   inputDevices?: XRInputDeviceConfig[];
+  /** Settings for pointer behavior. */
   pointerSettings?: XRPointerSettings;
 }
 
+/**
+ * Manages XR input devices including controllers and hand tracking.
+ *
+ * XRInputManager is the central hub for all WebXR input handling. It manages:
+ * - Controller and hand tracking poses
+ * - Visual representations (3D models) of input devices
+ * - Gamepad button and axis state
+ * - Pointer raycasting for UI interaction
+ *
+ * @remarks
+ * - Access via `world.input` after initializing a World.
+ * - Gamepads are lazily created when a controller connects.
+ * - Use `gamepads.left` / `gamepads.right` for button queries.
+ * - Visual adapters handle rendering of controller/hand models.
+ *
+ * @example
+ * ```ts
+ * // Check if trigger is pressed on right controller
+ * const rightGamepad = world.input.gamepads.right;
+ * if (rightGamepad?.getButtonPressed('xr-standard-trigger')) {
+ *   console.log('Trigger pressed!');
+ * }
+ * ```
+ *
+ * @category Input
+ */
 export class XRInputManager {
+  /** The XR origin containing head and hand tracking spaces. */
   public readonly xrOrigin: XROrigin;
 
+  /** Multi-pointers for left and right hands, handling raycasting and interaction. */
   public readonly multiPointers: Record<'left' | 'right', MultiPointer>;
 
+  /**
+   * Stateful gamepads for querying button/axis state.
+   * Undefined until a controller connects for that hand.
+   */
   public readonly gamepads = {
     left: undefined,
     right: undefined,
   } as Record<'left' | 'right', StatefulGamepad | undefined>;
 
+  /**
+   * Visual adapters managing 3D models for controllers and hands.
+   * Access `left`/`right` signals for the currently active adapter per hand.
+   */
   public readonly visualAdapters: {
     controller: {
       left: XRControllerVisualAdapter;
@@ -157,6 +231,14 @@ export class XRInputManager {
     };
   }
 
+  /**
+   * Updates all input devices, poses, and pointer states.
+   * Called each frame by the World's render loop.
+   *
+   * @param xrManager The Three.js WebXR manager.
+   * @param delta Time elapsed since last frame in seconds.
+   * @param time Total elapsed time in seconds.
+   */
   update(xrManager: WebXRManager, delta: number, time: number): void {
     const session = xrManager.getSession();
     if (!session) {
@@ -216,6 +298,13 @@ export class XRInputManager {
     } catch {}
   }
 
+  /**
+   * Checks if a specific device type is the primary input for a hand.
+   *
+   * @param deviceType The type of device to check ('controller' or 'hand').
+   * @param handedness Which hand to check ('left' or 'right').
+   * @returns True if the device is the primary input source for that hand.
+   */
   isPrimary(deviceType: 'controller' | 'hand', handedness: 'left' | 'right') {
     return !!this.activeInputSources[deviceType][handedness]?.isPrimary;
   }

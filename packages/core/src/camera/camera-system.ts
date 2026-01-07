@@ -17,10 +17,13 @@ import {
 } from './types.js';
 
 /**
- * CameraSystem - Manages camera stream lifecycle for CameraSource components
- * Automatically starts streams when XR session is active, stops when inactive
+ * Manages camera stream lifecycle for CameraSource components.
+ * Automatically starts streams when XR session is active, stops when inactive.
  *
- * System is stateless - all state is stored in CameraSource components
+ * @remarks
+ * System is stateless - all state is stored in CameraSource components.
+ *
+ * @category Camera
  */
 export class CameraSystem extends createSystem({
   cameras: { required: [CameraSource] },

@@ -45,10 +45,10 @@ export const LocomotionEnvironment = createComponent(
 );
 
 /**
- * Physics‑driven locomotion (slide, teleport, turn) backed by the {@link @iwsdk/locomotor!Locomotor} engine.
+ * Physics‑driven locomotion (slide, teleport, turn) backed by the Locomotor engine.
  *
  * @remarks
- * - Enable this system via {@link WorldOptions.features.enableLocomotion}.
+ * - Enable this system via `WorldOptions.features.enableLocomotion`.
  * - Add {@link LocomotionEnvironment} to level meshes to make them walkable.
  * - For moving platforms, use `EnvironmentType.KINEMATIC` and keep transforms updated.
  * - In hand‑tracking mode, micro‑gesture controls can toggle turn/teleport using swipe gestures.

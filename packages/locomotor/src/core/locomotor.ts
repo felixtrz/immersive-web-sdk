@@ -22,41 +22,92 @@ export { EnvironmentType };
 
 const UNIT_SCALE = new Vector3(1, 1, 1);
 
+/**
+ * Configuration options for the Locomotor physics engine.
+ * @category Locomotion
+ */
 export interface LocomotorConfig {
+  /** Initial player position in world space. */
   initialPlayerPosition?: Vector3;
+  /** Physics update frequency in Hz (default: 60). */
   updateFrequency?: number;
+  /** Gravity for teleport parabolic ray (negative, default: -0.4). */
   rayGravity?: number;
+  /** Maximum drop distance when projecting player to ground (default: 5.0). */
   maxDropDistance?: number;
+  /** Jump apex height in meters (default: 1.5). */
   jumpHeight?: number;
+  /** Minimum seconds between jumps (default: 0.1). */
   jumpCooldown?: number;
+  /** Whether to run physics in a Web Worker (default: true). */
   useWorker?: boolean;
 }
 
+/**
+ * Player position update from the locomotion engine.
+ * @category Locomotion
+ */
 export interface PositionUpdate {
+  /** Current player position. */
   position: Vector3;
+  /** Whether the player is currently on the ground. */
   isGrounded: boolean;
 }
 
+/**
+ * Result of a raycast hit test against environment geometry.
+ * @category Locomotion
+ */
 export interface RaycastResult {
+  /** Whether the ray hit any geometry. */
   hit: boolean;
+  /** Hit point in world space. */
   point?: Vector3;
+  /** Surface normal at hit point. */
   normal?: Vector3;
+  /** Distance from ray origin to hit point. */
   distance?: number;
 }
 
 /**
- * Main thread interface for locomotion physics engine
- * Supports both web worker mode (default) and inline mode
+ * Physics-based locomotion engine for WebXR applications.
  *
- * - Worker mode: Runs physics engine in a separate thread for better performance
- * - Inline mode: Runs physics engine in the same thread for snappier controls
+ * Locomotor provides player movement physics including:
+ * - Collision detection with environment geometry
+ * - Gravity and ground detection
+ * - Jumping mechanics
+ * - Teleportation raycasting
+ * - Sliding movement
  *
- * Use LocomotorConfig.useWorker to control the mode (default: true)
+ * @remarks
+ * - By default runs in a Web Worker for better performance.
+ * - Set `useWorker: false` for inline mode with snappier controls.
+ * - Add walkable surfaces via `addEnvironment()`.
+ * - Use `EnvironmentType.KINEMATIC` for moving platforms.
+ *
+ * @example
+ * ```ts
+ * const locomotor = new Locomotor({ useWorker: true });
+ * await locomotor.initialize();
+ *
+ * // Add floor as walkable surface
+ * locomotor.addEnvironment(floorMesh, EnvironmentType.STATIC);
+ *
+ * // In render loop
+ * locomotor.update(delta);
+ * player.position.copy(locomotor.position);
+ * ```
+ *
+ * @category Locomotion
  */
 export class Locomotor {
+  /** Object3D positioned at the current teleport hit test location. */
   public hitTestTarget: Object3D;
+  /** Surface normal at the teleport hit test location. */
   public hitTestNormal = new Vector3();
+  /** Whether the player is currently on the ground. */
   public isGrounded = false;
+  /** Current player position computed by the physics engine. */
   public position = new Vector3();
 
   private worker?: Worker;
@@ -99,6 +150,10 @@ export class Locomotor {
     this.hitTestTarget.visible = false;
   }
 
+  /**
+   * Initializes the locomotion engine.
+   * Must be called before using any other methods.
+   */
   async initialize(): Promise<void> {
     if (this.initialized) {
       return;
@@ -132,6 +187,7 @@ export class Locomotor {
     this.initialized = true;
   }
 
+  /** Shuts down the locomotion engine and releases resources. */
   terminate(): void {
     if (this.useWorker && this.worker) {
       this.worker.terminate();
@@ -144,6 +200,10 @@ export class Locomotor {
     this.kinematicEnvs.clear();
   }
 
+  /**
+   * Updates the locomotion engine configuration at runtime.
+   * @param config Partial configuration to merge with existing settings.
+   */
   updateConfig(config: Partial<LocomotorConfig>): void {
     Object.assign(this.config, config);
 
@@ -203,6 +263,13 @@ export class Locomotor {
     }
   }
 
+  /**
+   * Adds an Object3D hierarchy as walkable environment geometry.
+   *
+   * @param object3D The Object3D containing mesh geometry to add.
+   * @param type Environment type: STATIC for fixed geometry, KINEMATIC for moving platforms.
+   * @returns A handle ID to reference this environment for updates or removal.
+   */
   addEnvironment(
     object3D: Object3D,
     type: string = EnvironmentType.STATIC,
@@ -246,6 +313,10 @@ export class Locomotor {
     return envHandle;
   }
 
+  /**
+   * Removes a previously added environment from the physics simulation.
+   * @param envHandle The handle returned by `addEnvironment()`.
+   */
   removeEnvironment(envHandle: number): void {
     if (!this.initialized) {
       return;
@@ -274,6 +345,11 @@ export class Locomotor {
     }
   }
 
+  /**
+   * Updates the world matrices of kinematic (moving) environments.
+   * Call this each frame for moving platforms to keep physics in sync.
+   * @param envHandles Optional array of specific handles to update. If omitted, updates all kinematic environments.
+   */
   updateKinematicEnvironments(envHandles?: number[]): void {
     if (!this.initialized) {
       return;
@@ -307,6 +383,10 @@ export class Locomotor {
     }
   }
 
+  /**
+   * Applies sliding movement in the given direction.
+   * @param direction Movement direction vector (magnitude determines speed).
+   */
   slide(direction: Vector3): void {
     if (!this.initialized) {
       return;
@@ -321,6 +401,10 @@ export class Locomotor {
     }
   }
 
+  /**
+   * Instantly teleports the player to a new position.
+   * @param position Target position in world space.
+   */
   teleport(position: Vector3): void {
     if (!this.initialized) {
       return;
@@ -335,6 +419,12 @@ export class Locomotor {
     }
   }
 
+  /**
+   * Requests a parabolic raycast for teleportation targeting.
+   * Results update `hitTestTarget` position and `hitTestNormal`.
+   * @param origin Ray origin in world space.
+   * @param direction Initial ray direction.
+   */
   requestHitTest(origin: Vector3, direction: Vector3): void {
     if (!this.initialized) {
       return;
@@ -360,6 +450,7 @@ export class Locomotor {
     }
   }
 
+  /** Triggers a player jump if grounded and cooldown has elapsed. */
   jump(): void {
     if (!this.initialized) {
       return;
@@ -372,6 +463,7 @@ export class Locomotor {
     }
   }
 
+  /** Returns whether the locomotion engine has been initialized. */
   isInitialized(): boolean {
     return this.initialized;
   }
