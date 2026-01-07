@@ -46,7 +46,7 @@ entities:
       tag: Environment
     - components:
         com.iwsdk.components.AudioSource:
-          src: /audio/beepboop.mp3
+          src: ./audio/beepboop.mp3
           coneInnerAngle: 45
           coneOuterAngle: 180
           maxInstances: 5
@@ -83,7 +83,7 @@ entities:
           playbackMode: 3
           coneOuterAngle: 180
           coneInnerAngle: 45
-          src: /audio/beepboop.mp3
+          src: ./audio/beepboop.mp3
         com.iwsdk.components.Interactable:
           {}
         com.iwsdk.components.Spinner:
@@ -113,7 +113,7 @@ entities:
       tag: robot duplicate
     - components:
         com.iwsdk.components.AudioSource:
-          src: /audio/beepboop.mp3
+          src: ./audio/beepboop.mp3
           coneInnerAngle: 45
           coneOuterAngle: 180
           playbackMode: 1
@@ -149,7 +149,7 @@ entities:
         com.iwsdk.components.Interactable:
           {}
         com.iwsdk.components.PanelUI:
-          config: /ui/welcome.uikitml
+          config: ./ui/welcome.uikitml
         com.iwsdk.components.ScreenSpace:
           top: 20px
           height: 40%

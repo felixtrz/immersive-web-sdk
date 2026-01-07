@@ -22,17 +22,17 @@ import {
 export class SettingsSystem extends createSystem({
   settingsPanel: {
     required: [PanelUI, PanelDocument],
-    where: [eq(PanelUI, 'config', '/ui/settings.json')],
+    where: [eq(PanelUI, 'config', './ui/settings.json')],
   },
   welcomePanel: {
     required: [PanelUI, PanelDocument],
-    where: [eq(PanelUI, 'config', '/ui/welcome.json')],
+    where: [eq(PanelUI, 'config', './ui/welcome.json')],
   },
 }) {
   init() {
     // Set up reactive UI interaction setup when panel is loaded
     this.queries.settingsPanel.subscribe('qualify', (entity) => {
-      if (entity.getValue(PanelUI, 'config') === '/ui/settings.json') {
+      if (entity.getValue(PanelUI, 'config') === './ui/settings.json') {
         this.setupUIInteractions(entity);
 
         entity.addComponent(AudioSource, {

@@ -28,7 +28,7 @@ World.create(document.getElementById('scene-container'), {
     sessionMode: SessionMode.ImmersiveVR,
     features: { handTracking: true },
   },
-  level: '/glxf/Composition.glxf',
+  level: './glxf/Composition.glxf',
   features: {
     grabbing: true,
     locomotion: true,

@@ -14,17 +14,17 @@ import { LogInIcon, RectangleGogglesIcon } from '@pmndrs/uikit-lucide';
 
 const assets = {
   switchSound: {
-    url: '/audio/switch.mp3',
+    url: './audio/switch.mp3',
     type: AssetType.Audio,
     priority: 'background',
   },
   song: {
-    url: '/audio/beepboop.mp3',
+    url: './audio/beepboop.mp3',
     type: AssetType.Audio,
     priority: 'background',
   },
   webxrLogo: {
-    url: '/textures/webxr.jpg',
+    url: './textures/webxr.jpg',
     type: AssetType.Texture,
     priority: 'critical',
   },
@@ -38,7 +38,7 @@ World.create(document.getElementById('scene-container'), {
       handTracking: { required: true },
     },
   },
-  level: '/glxf/Composition.glxf',
+  level: './glxf/Composition.glxf',
   features: {
     locomotion: true,
     spatialUI: { kits: [horizonKit, { LogInIcon, RectangleGogglesIcon }] },

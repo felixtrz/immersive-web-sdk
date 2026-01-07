@@ -17,7 +17,7 @@ import {
 export class SettingsSystem extends createSystem({
   configuredPanels: {
     required: [PanelUI, PanelDocument],
-    where: [eq(PanelUI, 'config', '/ui/welcome.json')],
+    where: [eq(PanelUI, 'config', './ui/welcome.json')],
   },
 }) {
   init() {

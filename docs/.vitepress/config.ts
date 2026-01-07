@@ -68,6 +68,7 @@ gtag('config', 'G-V03QDNGKY3');`,
       { text: 'Guides', link: '/guides/01-project-setup' },
       { text: 'Concepts', link: '/concepts/' },
       { text: 'API', link: '/api/' },
+      { text: 'Examples', link: '/examples/' },
       {
         text: loadVersion(),
         items: [
@@ -234,6 +235,19 @@ gtag('config', 'G-V03QDNGKY3');`,
         },
       ],
       '/api/': loadTypedocSidebar(),
+      '/examples/': [
+        {
+          text: 'Examples',
+          items: [
+            { text: 'Audio', link: '/examples/#audio' },
+            { text: 'Environment Raycast', link: '/examples/#environment-raycast' },
+            { text: 'Grab Interactions', link: '/examples/#grab' },
+            { text: 'Locomotion', link: '/examples/#locomotion' },
+            { text: 'Physics', link: '/examples/#physics' },
+            { text: 'Scene Understanding', link: '/examples/#scene-understanding' },
+          ],
+        },
+      ],
     },
 
     search: {

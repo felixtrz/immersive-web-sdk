@@ -14,7 +14,7 @@ import { LogInIcon, RectangleGogglesIcon } from '@pmndrs/uikit-lucide';
 
 const assets = {
   switchSound: {
-    url: '/audio/switch.mp3',
+    url: './audio/switch.mp3',
     type: AssetType.Audio,
     priority: 'background',
   },
@@ -32,7 +32,7 @@ World.create(document.getElementById('scene-container'), {
       handTracking: { required: true },
     },
   },
-  level: '/glxf/Composition.glxf',
+  level: './glxf/Composition.glxf',
   features: {
     grabbing: true,
     locomotion: true,
