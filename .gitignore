@@ -89,3 +89,6 @@ example-local-build/**/public/ui/
 # Auto generated version files
 **/version.ts
 **/version.js
+
+# Meta Spatial Editor CLI (downloaded by build-examples.sh in CI)
+.meta-spatial-cli/

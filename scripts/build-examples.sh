@@ -13,6 +13,50 @@ BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EXAMPLES_DIR="$BASE_DIR/examples"
 DOCS_EXAMPLES_DIR="$BASE_DIR/docs/.vitepress/dist/examples"
 
+# Download and setup Meta Spatial Editor CLI for Linux (CI only)
+if [[ "$(uname)" == "Linux" ]]; then
+    CLI_DIR="$BASE_DIR/.meta-spatial-cli"
+    CLI_URL="https://securecdn-sjc6-1.oculus.com/binaries/download/?id=32756129430698033"
+
+    echo "📥 Downloading Meta Spatial Editor CLI..."
+    mkdir -p "$CLI_DIR"
+    cd "$CLI_DIR"
+
+    if ! curl -L -o meta-spatial-cli.tar.gz "$CLI_URL"; then
+        echo "❌ Failed to download CLI"
+        exit 1
+    fi
+
+    echo "📦 Extracting CLI..."
+    if ! tar -xzf meta-spatial-cli.tar.gz; then
+        echo "❌ Failed to extract CLI"
+        exit 1
+    fi
+
+    # Make CLI executable
+    chmod +x meta-spatial-editor-cli-linux-dist/MetaSpatialEditorCLI
+    chmod +x meta-spatial-editor-cli-linux-dist/meta-spatial-editor-cli
+
+    CLI_PATH="$CLI_DIR/meta-spatial-editor-cli-linux-dist/MetaSpatialEditorCLI"
+
+    # Verify CLI works
+    echo "🔍 Verifying CLI installation..."
+    if ! "$CLI_PATH" version; then
+        echo "❌ CLI verification failed"
+        exit 1
+    fi
+
+    echo "✅ CLI ready at: $CLI_PATH"
+    echo ""
+
+    # Export CLI path for use in builds
+    export META_SPATIAL_EDITOR_CLI_PATH="$CLI_PATH"
+
+    cd "$BASE_DIR"
+else
+    echo "⏭️  Skipping Meta Spatial Editor CLI download (non-Linux environment)"
+fi
+
 # Track build results
 FAILED_EXAMPLES=()
 SUCCESS_COUNT=0

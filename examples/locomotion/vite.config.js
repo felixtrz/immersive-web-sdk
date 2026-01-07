@@ -33,6 +33,9 @@ export default defineConfig({
 
     // GLXF generation plugin with file watcher
     generateGLXF({
+      ...(process.env.META_SPATIAL_EDITOR_CLI_PATH && {
+        metaSpatialCliPath: process.env.META_SPATIAL_EDITOR_CLI_PATH,
+      }),
       metaSpatialDir: 'metaspatial',
       outputDir: 'public/glxf', // Match the manual CLI test output
       verbose: false,
