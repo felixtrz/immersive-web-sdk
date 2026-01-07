@@ -106,8 +106,25 @@ export class Locomotor {
 
     if (this.useWorker) {
       // Create worker using lazy loading pattern (await will be handled by plugin)
-      this.worker = new Worker(new URL('../worker/worker.js', import.meta.url));
+      console.log(
+        '[Locomotor] Creating worker with URL:',
+        new URL('../worker/worker.js', import.meta.url).href,
+      );
+      try {
+        this.worker = new Worker(
+          new URL('../worker/worker.js', import.meta.url),
+        );
+        console.log('[Locomotor] Worker created successfully');
+      } catch (error) {
+        console.error('[Locomotor] Failed to create worker:', error);
+        throw error;
+      }
 
+      this.worker.onerror = (error) => {
+        console.error('[Locomotor] Worker error:', error);
+      };
+
+      console.log('[Locomotor] Sending Init message to worker');
       this.worker.postMessage({
         type: MessageType.Init,
         payload: {
@@ -409,7 +426,17 @@ export class Locomotor {
     };
   }
 
+  private workerMsgCount = 0;
   private handleWorkerMessage(e: MessageEvent): void {
+    this.workerMsgCount++;
+    if (this.workerMsgCount <= 3 || this.workerMsgCount % 100 === 0) {
+      console.log(
+        '[Locomotor] Received message from worker #' +
+          this.workerMsgCount +
+          ':',
+        e.data,
+      );
+    }
     if (e.data instanceof Array) {
       const messageType = e.data[0];
 

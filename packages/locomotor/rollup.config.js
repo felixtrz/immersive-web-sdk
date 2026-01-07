@@ -27,7 +27,8 @@ export default {
     }),
 
     // Worker asset plugin - detects and transforms Worker patterns
-    worker64({ minify: true }),
+    // Note: minify: false to preserve console.log for debugging
+    worker64({ minify: false }),
     resolve({
       preferBuiltins: false,
     }),

@@ -9,6 +9,8 @@ import { Matrix4, Vector3 } from 'three';
 import { LocomotionEngine } from '../core/engine.js';
 import { MessageType } from '../types/message-types.js';
 
+console.log('[Locomotor Worker] Worker script loaded and executing');
+
 let engine: LocomotionEngine;
 
 let updateFrequency = 60;
@@ -19,13 +21,19 @@ const tempMatrix = new Matrix4();
 const environments = new Set<number>();
 
 onmessage = function (e) {
+  console.log('[Locomotor Worker] Received message:', e.data);
   if (!(e.data instanceof Array)) {
     const { type, payload } = e.data;
     switch (type) {
       case MessageType.Init: {
+        console.log(
+          '[Locomotor Worker] Initializing engine with position:',
+          payload.initialPlayerPosition,
+        );
         engine = new LocomotionEngine(
           tempVec1.fromArray(payload.initialPlayerPosition),
         );
+        console.log('[Locomotor Worker] Engine initialized successfully');
         break;
       }
       case MessageType.AddEnvironment: {
@@ -121,6 +129,7 @@ onmessage = function (e) {
   }
 };
 
+let updateCount = 0;
 function update() {
   engine?.update(1 / updateFrequency);
   if (engine?.updating) {
@@ -129,8 +138,16 @@ function update() {
     engine.playerPosition.toArray(response, 1);
     response[5] = engine.isGrounded ? 1 : 0;
     self.postMessage(response);
+    updateCount++;
+    if (updateCount <= 3 || updateCount % 100 === 0) {
+      console.log(
+        '[Locomotor Worker] Sent position update #' + updateCount + ':',
+        response.slice(1, 4),
+      );
+    }
   }
   setTimeout(update, 1000 / updateFrequency);
 }
 
+console.log('[Locomotor Worker] Starting update loop');
 update();
