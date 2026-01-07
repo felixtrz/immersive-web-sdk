@@ -5,14 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { AssetType, SessionMode, World } from '@iwsdk/core';
+import { AssetManifest, AssetType, SessionMode, World } from '@iwsdk/core';
 
 import { SettingsSystem } from './panel.js';
 import { ElevatorSystem } from './elevator.js';
 import * as horizonKit from '@pmndrs/uikit-horizon';
 import { LogInIcon, RectangleGogglesIcon } from '@pmndrs/uikit-lucide';
 
-const assets = {
+const assets: AssetManifest = {
   switchSound: {
     url: './audio/switch.mp3',
     type: AssetType.Audio,
@@ -20,7 +20,7 @@ const assets = {
   },
 };
 
-World.create(document.getElementById('scene-container'), {
+World.create(document.getElementById('scene-container') as HTMLDivElement, {
   assets,
   render: {
     near: 0.001,

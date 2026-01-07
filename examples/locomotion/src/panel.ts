@@ -17,7 +17,19 @@ import {
   VisibilityState,
   SessionMode,
   Vector3,
+  Entity,
+  UIKitDocument,
+  UIKit,
 } from '@iwsdk/core';
+
+interface ConfigOptions {
+  comfortAssist: string;
+  slidingSpeed: string;
+  rayGravity: string;
+  turningMethod: string;
+  turningAngle: string;
+  turningSpeed: string;
+}
 
 export class SettingsSystem extends createSystem({
   settingsPanel: {
@@ -29,6 +41,8 @@ export class SettingsSystem extends createSystem({
     where: [eq(PanelUI, 'config', './ui/welcome.json')],
   },
 }) {
+  private vec3!: Vector3;
+
   init() {
     // Set up reactive UI interaction setup when panel is loaded
     this.queries.settingsPanel.subscribe('qualify', (entity) => {
@@ -47,10 +61,12 @@ export class SettingsSystem extends createSystem({
     });
 
     this.queries.welcomePanel.subscribe('qualify', (entity) => {
-      const document = PanelDocument.data.document[entity.index];
+      const document = PanelDocument.data.document[
+        entity.index
+      ] as UIKitDocument;
       if (!document) return;
 
-      const xrButton = document.getElementById('xr-button');
+      const xrButton = document.getElementById('xr-button') as UIKit.Text;
       xrButton.addEventListener('click', () => {
         this.world.launchXR({
           sessionMode: SessionMode.ImmersiveVR,
@@ -58,7 +74,7 @@ export class SettingsSystem extends createSystem({
         });
       });
 
-      const exitButton = document.getElementById('exit-button');
+      const exitButton = document.getElementById('exit-button') as UIKit.Text;
       exitButton.addEventListener('click', () => {
         this.world.exitXR();
       });
@@ -72,15 +88,17 @@ export class SettingsSystem extends createSystem({
     this.vec3 = new Vector3();
   }
 
-  setupUIInteractions(entity) {
+  setupUIInteractions(entity: Entity) {
     // Get the UIKitDocument for DOM-like access
-    const document = PanelDocument.data.document[entity.index];
+    const document = PanelDocument.data.document[
+      entity.index
+    ] as UIKitDocument;
     if (!document) {
       console.error('Failed to get UIKitDocument for settings panel');
       return;
     }
 
-    const configOptions = {
+    const configOptions: ConfigOptions = {
       comfortAssist: 'standard-assist',
       slidingSpeed: 'normal-speed',
       rayGravity: 'normal-range',
@@ -96,8 +114,12 @@ export class SettingsSystem extends createSystem({
     this.setupTurningMethodVisibility(document, configOptions);
   }
 
-  setupConfigButtons(document, entity, configOptions) {
-    const configGroups = {
+  setupConfigButtons(
+    document: UIKitDocument,
+    entity: Entity,
+    configOptions: ConfigOptions,
+  ) {
+    const configGroups: Record<string, string[]> = {
       'comfort-assist': ['no-assist', 'standard-assist', 'high-assist'],
       'sliding-speed': ['slow-speed', 'normal-speed', 'fast-speed'],
       'ray-gravity': ['near-range', 'normal-range', 'far-range'],
@@ -109,7 +131,7 @@ export class SettingsSystem extends createSystem({
     Object.entries(configGroups).forEach(([_, buttonIds]) => {
       const updateButtonStyling = () => {
         buttonIds.forEach((buttonId) => {
-          const button = document.getElementById(buttonId);
+          const button = document.getElementById(buttonId) as UIKit.Text | null;
           if (button) {
             const isSelected = Object.values(configOptions).includes(buttonId);
             if (isSelected) {
@@ -128,26 +150,34 @@ export class SettingsSystem extends createSystem({
       };
 
       buttonIds.forEach((buttonId) => {
-        const button = document.getElementById(buttonId);
+        const button = document.getElementById(buttonId) as UIKit.Text | null;
         if (button) {
           button.addEventListener('click', () => {
             // Find which config option this button belongs to
-            let configKey = null;
+            let configKey: keyof ConfigOptions | null = null;
             for (const [key, selectedButtonId] of Object.entries(
               configOptions,
             )) {
               if (buttonIds.includes(selectedButtonId)) {
-                configKey = key;
+                configKey = key as keyof ConfigOptions;
                 break;
               }
             }
 
             if (configKey) {
               configOptions[configKey] = buttonId;
-              const value = button.inputProperties.dataValue;
+              const value = (
+                button as UIKit.Text & {
+                  inputProperties: { dataValue?: number };
+                }
+              ).inputProperties.dataValue;
               if (value !== undefined) {
-                this.world.getSystem(LocomotionSystem).config[configKey].value =
-                  Number(value);
+                (
+                  this.world.getSystem(LocomotionSystem).config as Record<
+                    string,
+                    { value: number }
+                  >
+                )[configKey].value = Number(value);
               }
               updateButtonStyling();
               AudioUtils.play(entity);
@@ -165,11 +195,18 @@ export class SettingsSystem extends createSystem({
     });
   }
 
-  setupTurningMethodVisibility(document, configOptions) {
+  setupTurningMethodVisibility(
+    document: UIKitDocument,
+    configOptions: ConfigOptions,
+  ) {
     const isSnapTurn = configOptions.turningMethod === 'snap-turn';
 
-    const turningSpeed = document.getElementById('turning-speed');
-    const turningAngle = document.getElementById('turning-angle');
+    const turningSpeed = document.getElementById(
+      'turning-speed',
+    ) as UIKit.Container | null;
+    const turningAngle = document.getElementById(
+      'turning-angle',
+    ) as UIKit.Container | null;
 
     if (turningSpeed) {
       turningSpeed.setProperties({
@@ -188,13 +225,13 @@ export class SettingsSystem extends createSystem({
     if (this.input.gamepads.left?.getSelectStart()) {
       this.player.head.getWorldPosition(this.vec3);
       this.queries.settingsPanel.entities.forEach((entity) => {
-        if (entity.object3D.visible) {
-          entity.object3D.visible = false;
+        if (entity.object3D!.visible) {
+          entity.object3D!.visible = false;
         } else {
-          entity.object3D.visible = true;
-          this.player.raySpaces.left.getWorldPosition(entity.object3D.position);
-          entity.object3D.position.y += 0.3;
-          entity.object3D.lookAt(this.vec3);
+          entity.object3D!.visible = true;
+          this.player.raySpaces.left.getWorldPosition(entity.object3D!.position);
+          entity.object3D!.position.y += 0.3;
+          entity.object3D!.lookAt(this.vec3);
         }
       });
     }

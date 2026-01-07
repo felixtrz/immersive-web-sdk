@@ -15,11 +15,11 @@ export const Elevator = createComponent('Elevator', {
 export class ElevatorSystem extends createSystem({
   elevator: { required: [Elevator] },
 }) {
-  update(_delta, time) {
+  update(_delta: number, time: number) {
     this.queries.elevator.entities.forEach((entity) => {
-      const speed = entity.getValue(Elevator, 'speed');
-      const deltaY = entity.getValue(Elevator, 'deltaY');
-      entity.object3D.position.y = Math.sin(time * speed) * deltaY;
+      const speed = entity.getValue(Elevator, 'speed') as number;
+      const deltaY = entity.getValue(Elevator, 'deltaY') as number;
+      entity.object3D!.position.y = Math.sin(time * speed) * deltaY;
     });
   }
 }
