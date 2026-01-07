@@ -12,6 +12,8 @@ import {
   eq,
   VisibilityState,
   SessionMode,
+  UIKitDocument,
+  UIKit,
 } from '@iwsdk/core';
 
 export class SettingsSystem extends createSystem({
@@ -22,10 +24,12 @@ export class SettingsSystem extends createSystem({
 }) {
   init() {
     this.queries.configuredPanels.subscribe('qualify', (entity) => {
-      const document = PanelDocument.data.document[entity.index];
+      const document = PanelDocument.data.document[
+        entity.index
+      ] as UIKitDocument;
       if (!document) return;
 
-      const xrButton = document.getElementById('xr-button');
+      const xrButton = document.getElementById('xr-button') as UIKit.Text;
       xrButton.addEventListener('click', () => {
         this.world.launchXR({
           sessionMode: SessionMode.ImmersiveVR,
@@ -33,7 +37,7 @@ export class SettingsSystem extends createSystem({
         });
       });
 
-      const exitButton = document.getElementById('exit-button');
+      const exitButton = document.getElementById('exit-button') as UIKit.Text;
       exitButton.addEventListener('click', () => {
         this.world.exitXR();
       });

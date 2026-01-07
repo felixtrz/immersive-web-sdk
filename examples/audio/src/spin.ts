@@ -6,11 +6,11 @@
  */
 
 import {
+  AudioUtils,
   createComponent,
   createSystem,
-  Vector3,
   Pressed,
-  AudioUtils,
+  Vector3,
 } from '@iwsdk/core';
 
 export const Spinner = createComponent('Spinner', {});
@@ -19,6 +19,9 @@ export class SpinSystem extends createSystem({
   spinner: { required: [Spinner] },
   pressedSpinner: { required: [Spinner, Pressed] },
 }) {
+  private lookAtTarget!: Vector3;
+  private vec3!: Vector3;
+
   init() {
     this.lookAtTarget = new Vector3();
     this.vec3 = new Vector3();
@@ -31,7 +34,7 @@ export class SpinSystem extends createSystem({
   update() {
     this.queries.spinner.entities.forEach((entity) => {
       this.player.head.getWorldPosition(this.lookAtTarget);
-      const spinnerObject = entity.object3D;
+      const spinnerObject = entity.object3D!;
       spinnerObject.getWorldPosition(this.vec3);
       this.lookAtTarget.y = this.vec3.y;
       spinnerObject.lookAt(this.lookAtTarget);
