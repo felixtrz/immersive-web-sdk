@@ -27,13 +27,17 @@ export class SettingsSystem extends createSystem({
       const document = PanelDocument.data.document[
         entity.index
       ] as UIKitDocument;
-      if (!document) return;
+      if (!document) {
+        return;
+      }
 
       const xrButton = document.getElementById('xr-button') as UIKit.Text;
       xrButton.addEventListener('click', () => {
         this.world.launchXR({
           sessionMode: SessionMode.ImmersiveVR,
-          requiredFeatures: ['hand-tracking'],
+          features: {
+            handTracking: { required: true },
+          },
         });
       });
 
