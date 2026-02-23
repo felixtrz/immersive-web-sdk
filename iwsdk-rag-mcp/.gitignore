@@ -1,0 +1,41 @@
+# Build outputs
+dist/
+dist-tools/
+build/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Vector Database
+chroma_db/
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary cloned repositories and build artifacts
+tools/.temp/
+.temp/
+
+# Embeddings & Data (all generated, included in npm package but not git)
+data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
