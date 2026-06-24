@@ -192,12 +192,14 @@ export class PhysicsSystem extends createSystem(
             16,
           );
 
-          for (let mi = 0; mi < 15; mi++) {
+          for (let mi = 0; mi < 16; mi++) {
             if ((mi & 3) != 3) {
               this.matrixBuffer.elements[mi] = transformBuffer[mi];
+            } else {
+              // Set homogeneous coordinate row: [0, 0, 0, 1]
+              this.matrixBuffer.elements[mi] = mi === 15 ? 1.0 : 0.0;
             }
           }
-          this.matrixBuffer.elements[15] = 1.0;
           this.matrixBuffer.decompose(position, quaternion, this.scaleBuffer);
         }
       }
