@@ -153,7 +153,9 @@ project directory exists for every later artifact and tool:
 1. Scaffold with `@iwsdk/create` using the spec's mode/features
    (`references/build-milestones.md` has the flag menu); `cd` into the app.
 2. Move any `design/` files created so far into `<app>/design/` — from here
-   on, everything lives in the app root.
+   on, everything lives in the app root. Do the move BEFORE fanning out
+   Phase 2/3 agents (or brief them with the final app paths) — agents
+   writing to a stale staging path while you move it lose work.
 3. Run the deferred Phase 0 probes (`npx iwsdk status`, `npx iwsdk reference
 status`) and start `npx iwsdk reference warmup` in the background — it
    downloads while Phase 2 runs, so grounding (Phase 3) finds it ready.
@@ -184,6 +186,10 @@ Present results (artifact tool if available, else file paths + one-line
 descriptions). Ask for reactions if interactive; else proceed.
 
 Gate: deck + at least one concept piece exist and match the spec.
+
+Phases 2 and 3 both consume only the spec — with sub-agents available you
+may run them **concurrently** after the ideation gate; both must be done
+before Phase 4.
 
 ## Phase 3 — Grounding (spec → IWSDK reality)
 

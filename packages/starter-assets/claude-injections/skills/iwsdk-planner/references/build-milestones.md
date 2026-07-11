@@ -123,6 +123,27 @@ mechanic first (riskiest feel-work earliest); UI and audio get their own
 milestone unless trivial; every spec success criterion mapped to exactly one
 milestone's assertions.
 
+## Headless-hardening defaults (build these in from M1)
+
+The managed dev runtime steps physics on the raw frame delta, and headless
+environments hitch (reloads, screenshots, CI stalls) — a single multi-second
+step tunnels thin colliders and pops stacked contacts. Defaults that avoid a
+day of debugging:
+
+- **Solid-block static colliders** (0.3 m+ thick), never thin plates; extend
+  the floor under/behind every play area as a catch surface; add invisible
+  containment walls so nothing rolls out of the world.
+- **Spawn-gate dynamic bodies**: hold spawns until N consecutive stable
+  frames (e.g. 5 frames under 50 ms) so first steps can't tunnel them.
+- **Physics-on-demand for precarious arrangements** (stacks, pyramids,
+  dominoes): keep them body-less until the moment gameplay needs them
+  knockable; re-park body-less on reset.
+- **Self-healing bounds recovery**: a system that returns escaped dynamics
+  to their spawn poses.
+- **Check physical support when translating design layouts**: a layout
+  drawn for looks (e.g. cans spaced wide apart) may leave upper items
+  unsupported — stacking needs contact (can spacing ≈ 2·radius).
+
 ## The Milestone Loop (Phase 5)
 
 For each milestone:

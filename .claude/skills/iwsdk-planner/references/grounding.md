@@ -26,6 +26,14 @@ spatial audio) is this pipeline's most common and most expensive failure.
 Trust order for _signatures_: 3 > 1 > 2 > 4. Trust order for _patterns and
 gotchas_: 2 > 1 > 4.
 
+**Version drift is real**: curated docs (rung 2, plus the project CLAUDE.md)
+may describe APIs newer or older than the installed package. Example: docs
+describing `GrabSystem.forceRelease()` while the installed 0.4.2 has no such
+method, and `entity.setValue()` throwing on vector fields in elics 3.4.x
+while older docs show `setValue(Transform, 'position', [...])`. For every
+API your plan depends on, confirm the signature at rung 3 (installed
+`.d.ts`) or rung 1 before writing it into TECH_PLAN.
+
 ## Reference CLI protocol
 
 Run from **inside the app directory** (the CLI resolves the nearest folder
@@ -64,6 +72,10 @@ only. The first query after warmup pays model-load latency (~10–30 s).
 
 If reference is unavailable (no network / install failed): use ladder rungs
 2–4 and say so in TECH_PLAN's risk list — grounding confidence is lower.
+Known install failure: `@iwsdk/reference` depends on `onnxruntime-node`,
+whose postinstall downloads CUDA binaries; behind restrictive proxies it
+403s and kills `npm install`. Retry with
+`npm_config_onnxruntime_node_install_cuda=skip npm install`.
 
 ## Domain → API starting points
 

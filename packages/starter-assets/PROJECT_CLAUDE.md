@@ -261,11 +261,12 @@ root.addComponent(DomeGradient, { sky: [0.2, 0.6, 0.8, 1.0] });
 #### DON'T forget `_needsUpdate` after changing environment properties
 
 ```typescript
-// ❌ BAD - Changes are silently ignored
+// ❌ BAD - Changes are silently ignored (and setValue THROWS on vector
+// fields in elics 3.4.x — use getVectorView for Vec2/Vec3/Vec4/Color)
 root.setValue(DomeGradient, 'sky', [0.1, 0.2, 0.8, 1.0]);
 
-// ✅ GOOD - Set _needsUpdate to apply changes
-root.setValue(DomeGradient, 'sky', [0.1, 0.2, 0.8, 1.0]);
+// ✅ GOOD - vector write via getVectorView, then _needsUpdate (scalar)
+root.getVectorView(DomeGradient, 'sky').set([0.1, 0.2, 0.8, 1.0]);
 root.setValue(DomeGradient, '_needsUpdate', true);
 ```
 
@@ -584,9 +585,10 @@ Types.Float64; // 64-bit float
 Types.Int8; // 8-bit integer
 Types.Int16; // 16-bit integer
 Types.Int32; // 32-bit integer
-Types.Uint32; // 32-bit unsigned
 Types.Boolean; // true/false
 Types.String; // text
+Types.FilePath; // file path string
+Types.Vec2; // [x, y]
 Types.Vec3; // [x, y, z]
 Types.Vec4; // [x, y, z, w]
 Types.Color; // [r, g, b, a] - RGBA!

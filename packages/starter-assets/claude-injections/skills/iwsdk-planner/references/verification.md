@@ -138,6 +138,30 @@ Only the two most recent snapshot labels are retained.
 - After deploying: verify the live HTML references the newly built hashed
   assets (stale-dist deploys are the classic ship failure).
 
+## Headless hardening (emulated runtime — learned the hard way)
+
+- **`xr select` can wedge the 0.4.2 headless runtime** (bridge reports
+  connected but every command times out). Use `xr set-select-value` 1→0 for
+  grab/release and `xr set-gamepad-state` button presses for clicks. UIKit
+  buttons: app code should listen to **`pointerup` in addition to `click`**
+  — the emulated select paths do not synthesize `click` events.
+- **Physics steps on the raw frame delta.** Reloads, screenshots, and
+  `ecs snapshot` (full-state serialize) stall the tab for hundreds of ms to
+  seconds; a single huge step tunnels thin/falling bodies and pops stacked
+  contacts. Don't run heavy CLI commands mid-interaction; snapshot between
+  scenarios, not during them. Build apps defensively (see
+  build-milestones.md headless-hardening defaults).
+- **Parse the right payload path**: `browser logs` returns the entries under
+  `data.result` (a LIST of {level, message}); `browser screenshot` returns
+  `data.screenshotPath` directly under `data`. Shapes vary per command —
+  check one real response before scripting assertions.
+- **Log-window noise**: `[IWSDK-MCP-TRACE]` lines flood small `count`
+  windows; use `count` 60–100 or a `pattern` filter for game logs.
+- **Queries and screenshots disagreeing** (state changes you can't explain)
+  usually means **two browser tabs** are connected — the relay is
+  first-response-wins. Check `dev status` → `connectedClientCount`; if >1,
+  `npx iwsdk dev restart` to converge on one tab.
+
 ## Recovery ladder (runtime unresponsive / weird)
 
 1. `npx iwsdk xr status` and `npx iwsdk dev status` — what state is it in?

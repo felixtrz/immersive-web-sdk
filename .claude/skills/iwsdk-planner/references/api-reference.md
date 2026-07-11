@@ -6,6 +6,12 @@ writing IWSDK code, or reviewing it. It contains no process guidance — the
 pipeline lives in `SKILL.md`; phase playbooks live in the sibling
 `references/*.md` files.
 
+**Version sensitivity:** this reference tracks the SDK at the time the skill
+shipped. For any API your plan depends on, verify the signature against the
+_installed_ package (`node_modules/@iwsdk/core/dist/**/*.d.ts`) — newer
+methods (e.g. `GrabSystem.forceRelease`) may not exist in the version your
+app has installed, and vice versa.
+
 ## Core Architecture
 
 IWSDK is built on three pillars:
@@ -429,6 +435,15 @@ PhysicsShapeType.TriMesh; // Exact mesh geometry (expensive)
 PhysicsShapeType.Auto; // Auto-detect from Three.js geometry
 ```
 
+**Teleporting / re-posing a dynamic body:** every PhysicsBody/PhysicsShape
+field is consumed at body-creation time only, and the engine overwrites the
+entity's Transform each frame. To move a dynamic body programmatically:
+remove BOTH components → write `object3D.position/quaternion` → re-add both
+(fresh body at the new pose, zero velocity, awake; recreation spans ~2
+physics frames). Writing Transform alone is silently clobbered; switching
+`state` after creation is a no-op; `PhysicsManipulation` cannot zero a
+velocity (all-zero vectors are treated as "not set").
+
 ### 12. Grabbable Components
 
 ```typescript
@@ -461,6 +476,12 @@ entity.addComponent(TwoHandsGrabbable, {
   scaleMax: [2, 2, 2],
 });
 
+// ⚠️ One handle per entity: OneHandGrabbable, TwoHandsGrabbable, and
+// DistanceGrabbable are MUTUALLY EXCLUSIVE on the same entity (GrabSystem
+// creates a single Handle; near-grab denies ray pointers, distance-grab
+// denies grab pointers). Pick one per entity — DistanceGrabbable with
+// MoveTowardsTarget covers both near and far pickup via trigger.
+
 // Distance grab
 entity.addComponent(DistanceGrabbable, {
   rotate: true,
@@ -468,7 +489,7 @@ entity.addComponent(DistanceGrabbable, {
   scale: true,
   movementMode: MovementMode.MoveTowardsTarget, // MoveTowardsTarget | MoveAtSource | RotateAtSource | MoveFromTarget
   returnToOrigin: false, // Snap back when released
-  moveSpeedFactor: 0.1, // Movement/rotation speed factor (0-1) for MoveTowardsTarget mode
+  moveSpeedFactor: 0.1, // MoveTowardsTarget pull lerp: alpha = factor * delta * 100, NOT clamped — keep <= 0.03 if frames can hitch (headless/CI) or the pull overshoots and diverges
 });
 
 // Force-release / hand lookup (game reset, weapon swap, recoil, etc.)
@@ -533,8 +554,8 @@ entity.addComponent(IBLTexture, {
 2. **After changing environment properties, MUST set `_needsUpdate: true`** — changes are silently ignored without it:
 
    ```typescript
-   root.setValue(DomeGradient, 'sky', [0.1, 0.2, 0.8, 1.0]);
-   root.setValue(DomeGradient, '_needsUpdate', true); // Required!
+   root.getVectorView(DomeGradient, 'sky').set([0.1, 0.2, 0.8, 1.0]);
+   root.setValue(DomeGradient, '_needsUpdate', true); // Required! (scalar — setValue OK)
    ```
 
 3. **Background vs IBL are separate**: `DomeTexture`/`DomeGradient` controls the visible sky. `IBLTexture`/`IBLGradient` controls scene lighting (reflections, ambient). You can mix them:
@@ -857,12 +878,12 @@ const entity = world.createTransformEntity(mesh, {
 // Transform component automatically syncs with Object3D (zero-copy)
 entity.object3D.position.set(0, 1, 0);
 
-// Or use component API
-entity.setValue(Transform, 'position', [0, 1, 0]);
-
-// Get vector view for efficient updates
+// Component API for vector fields: getVectorView ONLY — in elics 3.4.x
+// setValue/getValue THROW for Vec2/Vec3/Vec4/Color fields. setValue is
+// fine for scalars, booleans, strings, and enums.
 const posView = entity.getVectorView(Transform, 'position');
-posView[0] += delta; // Direct array write
+posView.set([0, 1, 0]); // write
+posView[0] += delta; // direct array element write
 ```
 
 ### 21. Panel UI Pattern
@@ -1369,7 +1390,7 @@ These visuals are automatically created and managed by IWSDK systems:
 4. **DON'T** create entities in update() without proper lifecycle management
 5. **DON'T** use `Types.Object` for data that could be typed (use Vec3, Float32, etc.)
 6. **DON'T** forget cleanup functions for subscriptions and resources
-7. **DON'T** modify entities during query iteration without careful consideration
+7. **DON'T** mutate live query Sets while iterating: if your loop body removes AND re-adds components (e.g. the physics re-pose idiom), the re-qualified entity is revisited by the same iteration — an infinite loop. Iterate `Array.from(query.entities)` instead
 8. **DON'T** enable locomotion without collision geometry - player falls through world
 9. **DON'T** enable features you don't use - adds overhead and can cause bugs
 10. **DON'T** confuse PhysicsBody (motion) with PhysicsShape (collision + material)

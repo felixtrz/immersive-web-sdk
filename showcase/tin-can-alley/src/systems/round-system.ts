@@ -4,6 +4,7 @@ import {
   Grabbed,
   PhysicsBody,
   Transform,
+  type Entity,
 } from '@iwsdk/core';
 import { gameGlobals } from '../components/game-state';
 import { Ball } from '../components/softball';
@@ -32,6 +33,7 @@ export class RoundSystem extends createSystem({
 }) {
   private resetting = false;
   private resetPending = false;
+  private outOfBounds: Entity[] = [];
   private settleTimer = -1;
   private clearPlaysLeft = 0;
   private clearTimer = 0;
@@ -108,19 +110,23 @@ export class RoundSystem extends createSystem({
     }
 
     // Self-healing: any ball that escapes the arena (physics hitch, wild
-    // throw) comes back to its counter slot. Held runaways are destroyed
-    // and respawned (0.4.2 has no force-release).
-    for (const ball of Array.from(this.queries.balls.entities)) {
+    // throw) comes back to its counter slot. Detect on the live Set with a
+    // reused scratch array (zero steady-state allocations); mutate only
+    // outside the Set iteration (re-adds mid-iteration would be revisited).
+    this.outOfBounds.length = 0;
+    for (const ball of this.queries.balls.entities) {
       const pos = ball.object3D!.position;
-      const out =
+      if (
         pos.y < -1 ||
         pos.y > 6 ||
         Math.abs(pos.x) > 3 ||
         pos.z > 3 ||
-        pos.z < -5;
-      if (!out) {
-        continue;
+        pos.z < -5
+      ) {
+        this.outOfBounds.push(ball);
       }
+    }
+    for (const ball of this.outOfBounds) {
       const wasThrown = ball.getValue(Ball, 'thrown');
       if (ball.hasComponent(Grabbed)) {
         const ip = ball.getVectorView(Ball, 'initialPosition');
