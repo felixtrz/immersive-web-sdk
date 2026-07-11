@@ -42,6 +42,7 @@
       "mcp__iwsdk-reference__find_dependents",
       "mcp__iwsdk-reference__find_usage_examples",
       "Skill(iwsdk-debug)",
+      "Skill(iwsdk-depth-occlusion)",
       "Skill(iwsdk-grab)",
       "Skill(iwsdk-physics)",
       "Skill(iwsdk-planner)",

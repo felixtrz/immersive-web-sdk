@@ -291,6 +291,16 @@ entity.addComponent(ScreenSpace, { width: '400px', top: '20px' });
 
 ---
 
+## Planning Pipeline
+
+If `.claude/skills/iwsdk-planner/SKILL.md` exists in this project, read it
+before planning any new experience or multi-system feature — it defines a
+phased ideation → design → grounding → architecture → build → verify → ship
+pipeline with per-phase artifacts under `design/`, and it is written to work
+without any vendor-specific tools (every step has an inline fallback). Its
+`references/api-reference.md` is the API ground truth to load when writing
+or reviewing IWSDK code.
+
 ## MCP Tools Available
 
 ### IWSDK-RAG (Code Intelligence)

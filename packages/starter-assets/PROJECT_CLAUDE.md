@@ -307,13 +307,14 @@ Use the iwsdk-project-code-reviewer agent to review my code
 
 ### `/iwsdk-planner`
 
-**IWSDK project planning and best practices guide**
+**IWSDK experience pipeline and planning guide**
 
 Use when:
 
-- Planning new IWSDK features
+- Building a new experience/game end-to-end (runs a phased ideation → design → grounding → architecture → build → verify → ship pipeline with per-phase artifacts under `design/`)
+- Planning new IWSDK features (quick single-feature checklist)
 - Designing systems/components
-- Need guidance on ECS, signals, or reactive patterns
+- Need guidance on ECS, signals, or reactive patterns (see its `references/api-reference.md`)
 
 ### `/iwsdk-grab`
 
@@ -366,7 +367,7 @@ Use when:
 
 ## Planning Rule
 
-When planning any new feature or system, ALWAYS invoke `/iwsdk-planner` first to load the full API reference and best practices.
+When planning any new feature or system, ALWAYS invoke `/iwsdk-planner` first. For a new experience built from an idea, follow its full phased pipeline; for a contained feature, use its Quick Planning checklist. Its `references/api-reference.md` is the API ground truth for grounding and review.
 
 ---
 
