@@ -1,0 +1,266 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Tin Can Alley environment: carnival booth at rest under a night sky, ferris wheel behind">
+  <title>Tin Can Alley — Environment (the booth at rest)</title>
+  <defs>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#07071a"/>
+      <stop offset="0.5" stop-color="#1a1a3e"/>
+      <stop offset="1" stop-color="#383873"/>
+    </linearGradient>
+    <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1e1e46"/>
+      <stop offset="1" stop-color="#07071a"/>
+    </linearGradient>
+    <linearGradient id="awnRed" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e2543e"/>
+      <stop offset="1" stop-color="#b02f1f"/>
+    </linearGradient>
+    <linearGradient id="awnCream" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f8eed8"/>
+      <stop offset="1" stop-color="#e0cfa9"/>
+    </linearGradient>
+    <linearGradient id="canBody" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6f7583"/>
+      <stop offset="0.18" stop-color="#d9dee6"/>
+      <stop offset="0.42" stop-color="#f2f5f9"/>
+      <stop offset="0.75" stop-color="#9aa0ae"/>
+      <stop offset="1" stop-color="#5c6270"/>
+    </linearGradient>
+    <linearGradient id="woodGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5a3a28"/>
+      <stop offset="1" stop-color="#38231a"/>
+    </linearGradient>
+    <radialGradient id="ballGrad" cx="0.36" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#fdf6e4"/>
+      <stop offset="0.55" stop-color="#f0e0bd"/>
+      <stop offset="1" stop-color="#c8b184"/>
+    </radialGradient>
+    <radialGradient id="bulbGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffd88a" stop-opacity="0.85"/>
+      <stop offset="0.5" stop-color="#ffb347" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#ffb347" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="panelGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffc76b" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#ffc76b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="poolGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffb347" stop-opacity="0.38"/>
+      <stop offset="1" stop-color="#ffb347" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="wheelGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#8a6bd4" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#8a6bd4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vign" cx="0.5" cy="0.46" r="0.75">
+      <stop offset="0" stop-color="#050510" stop-opacity="0"/>
+      <stop offset="0.68" stop-color="#050510" stop-opacity="0"/>
+      <stop offset="1" stop-color="#050510" stop-opacity="0.65"/>
+    </radialGradient>
+    <clipPath id="awnClip">
+      <polygon points="380,168 860,168 892,268 348,268"/>
+    </clipPath>
+    <!-- tin can: 36 x 50, bottom edge at y=0 -->
+    <g id="can">
+      <rect x="-18" y="-48" width="36" height="46" rx="3" fill="url(#canBody)"/>
+      <rect x="-18" y="-33" width="36" height="11" fill="#c8402d"/>
+      <ellipse cx="0" cy="-48" rx="18" ry="5" fill="#dfe3ea"/>
+      <ellipse cx="0" cy="-48" rx="12" ry="3.2" fill="#a9afbb"/>
+      <path d="M -18 -48 A 18 5 0 0 1 18 -48" fill="none" stroke="#fff6df" stroke-width="1.4" opacity="0.8"/>
+    </g>
+  </defs>
+
+  <!-- LAYER 1: night sky + stars -->
+  <rect x="0" y="0" width="1600" height="900" fill="url(#skyGrad)"/>
+  <g fill="#f5e9d0">
+    <circle cx="90" cy="110" r="2" opacity="0.75"/>
+    <circle cx="210" cy="60" r="1.4" opacity="0.5"/>
+    <circle cx="330" cy="200" r="1.2" opacity="0.4"/>
+    <circle cx="450" cy="80" r="1.8" opacity="0.7"/>
+    <circle cx="560" cy="150" r="1.2" opacity="0.45"/>
+    <circle cx="680" cy="50" r="1.6" opacity="0.6"/>
+    <circle cx="800" cy="120" r="1.3" opacity="0.5"/>
+    <circle cx="930" cy="70" r="2.2" opacity="0.8"/>
+    <circle cx="1040" cy="180" r="1.2" opacity="0.4"/>
+    <circle cx="1140" cy="90" r="1.5" opacity="0.55"/>
+    <circle cx="1250" cy="50" r="1.8" opacity="0.7"/>
+    <circle cx="1420" cy="110" r="1.3" opacity="0.5"/>
+    <circle cx="1520" cy="60" r="2" opacity="0.75"/>
+    <circle cx="1560" cy="250" r="1.2" opacity="0.4"/>
+    <circle cx="160" cy="320" r="1.2" opacity="0.35"/>
+    <circle cx="1010" cy="280" r="1.1" opacity="0.3"/>
+    <circle cx="1330" cy="130" r="1.2" opacity="0.45"/>
+    <circle cx="60" cy="230" r="1.5" opacity="0.55"/>
+  </g>
+
+  <!-- LAYER 2: ferris wheel silhouette, far right -->
+  <g>
+    <ellipse cx="1280" cy="350" rx="280" ry="260" fill="url(#wheelGlow)"/>
+    <line x1="1280" y1="350" x2="1180" y2="625" stroke="#1c1c40" stroke-width="14"/>
+    <line x1="1280" y1="350" x2="1380" y2="625" stroke="#1c1c40" stroke-width="14"/>
+    <circle cx="1280" cy="350" r="200" fill="none" stroke="#23234c" stroke-width="9"/>
+    <circle cx="1280" cy="350" r="168" fill="none" stroke="#23234c" stroke-width="3" opacity="0.7"/>
+    <g stroke="#23234c" stroke-width="5">
+      <line x1="1080" y1="350" x2="1480" y2="350"/>
+      <line x1="1280" y1="150" x2="1280" y2="550"/>
+      <line x1="1139" y1="209" x2="1421" y2="491"/>
+      <line x1="1139" y1="491" x2="1421" y2="209"/>
+    </g>
+    <circle cx="1280" cy="350" r="16" fill="#2a2a55"/>
+    <g fill="#1c1c40">
+      <rect x="1468" y="348" width="22" height="26" rx="6"/>
+      <rect x="1269" y="138" width="22" height="26" rx="6"/>
+      <rect x="1090" y="348" width="22" height="26" rx="6"/>
+      <rect x="1269" y="548" width="22" height="26" rx="6"/>
+      <rect x="1410" y="200" width="20" height="24" rx="6"/>
+      <rect x="1128" y="200" width="20" height="24" rx="6"/>
+      <rect x="1410" y="488" width="20" height="24" rx="6"/>
+      <rect x="1128" y="488" width="20" height="24" rx="6"/>
+    </g>
+    <g fill="#ffb347">
+      <circle cx="1480" cy="350" r="3.5" opacity="0.9"/>
+      <circle cx="1453" cy="250" r="3" opacity="0.6"/>
+      <circle cx="1380" cy="177" r="3.5" opacity="0.85"/>
+      <circle cx="1280" cy="150" r="3" opacity="0.55"/>
+      <circle cx="1180" cy="177" r="3.5" opacity="0.8"/>
+      <circle cx="1107" cy="250" r="3" opacity="0.5"/>
+      <circle cx="1080" cy="350" r="3.5" opacity="0.9"/>
+      <circle cx="1107" cy="450" r="3" opacity="0.6"/>
+      <circle cx="1180" cy="523" r="3.5" opacity="0.8"/>
+      <circle cx="1280" cy="550" r="3" opacity="0.55"/>
+      <circle cx="1380" cy="523" r="3.5" opacity="0.85"/>
+      <circle cx="1453" cy="450" r="3" opacity="0.6"/>
+    </g>
+  </g>
+
+  <!-- LAYER 3: far tent silhouettes + fog -->
+  <g fill="#14143a" opacity="0.85">
+    <polygon points="0,625 0,555 100,515 200,555 200,625"/>
+    <polygon points="215,625 215,580 300,548 385,580 385,625"/>
+    <polygon points="940,625 940,572 1030,538 1120,572 1120,625"/>
+    <polygon points="1490,625 1490,588 1600,565 1600,625"/>
+  </g>
+  <polygon points="100,515 94,491 116,500" fill="#d43d2a" opacity="0.75"/>
+  <polygon points="1030,538 1024,516 1044,524" fill="#d43d2a" opacity="0.75"/>
+  <circle cx="290" cy="590" r="3" fill="#ffb347" opacity="0.6"/>
+  <circle cx="1060" cy="592" r="3" fill="#ffb347" opacity="0.6"/>
+  <rect x="0" y="560" width="1600" height="70" fill="#3a3a75" opacity="0.18"/>
+  <rect x="0" y="596" width="1600" height="40" fill="#3a3a75" opacity="0.15"/>
+
+  <!-- LAYER 4: ground + warm light pool -->
+  <rect x="0" y="615" width="1600" height="285" fill="url(#groundGrad)"/>
+  <ellipse cx="620" cy="690" rx="430" ry="82" fill="url(#poolGlow)"/>
+
+  <!-- LAYER 5: string lights swagged to poles -->
+  <line x1="1120" y1="238" x2="1120" y2="640" stroke="#1c1c40" stroke-width="8"/>
+  <path d="M 880 150 Q 1000 268 1120 240" fill="none" stroke="#3a3a6a" stroke-width="3"/>
+  <path d="M 1120 240 Q 1370 300 1620 150" fill="none" stroke="#3a3a6a" stroke-width="3"/>
+  <path d="M -20 200 Q 170 268 360 152" fill="none" stroke="#3a3a6a" stroke-width="3"/>
+  <g>
+    <circle cx="960" cy="240" r="20" fill="url(#bulbGlow)"/><circle cx="960" cy="240" r="6" fill="#ffd88a"/>
+    <circle cx="1040" cy="252" r="18" fill="url(#bulbGlow)"/><circle cx="1040" cy="252" r="5.5" fill="#f0c169"/>
+    <circle cx="1240" cy="272" r="20" fill="url(#bulbGlow)"/><circle cx="1240" cy="272" r="6" fill="#ffd88a"/>
+    <circle cx="1370" cy="272" r="18" fill="url(#bulbGlow)"/><circle cx="1370" cy="272" r="5.5" fill="#f0c169"/>
+    <circle cx="1500" cy="230" r="20" fill="url(#bulbGlow)"/><circle cx="1500" cy="230" r="6" fill="#ffd88a"/>
+    <circle cx="90" cy="234" r="20" fill="url(#bulbGlow)"/><circle cx="90" cy="234" r="6" fill="#ffd88a"/>
+    <circle cx="200" cy="250" r="18" fill="url(#bulbGlow)"/><circle cx="200" cy="250" r="5.5" fill="#f0c169"/>
+    <circle cx="300" cy="212" r="20" fill="url(#bulbGlow)"/><circle cx="300" cy="212" r="6" fill="#ffd88a"/>
+  </g>
+
+  <!-- LAYER 6: the booth at rest -->
+  <ellipse cx="620" cy="632" rx="310" ry="16" fill="#000000" opacity="0.42"/>
+  <rect x="372" y="266" width="496" height="292" fill="#0d0d22"/>
+  <ellipse cx="620" cy="420" rx="230" ry="120" fill="url(#panelGlow)" opacity="0.25"/>
+  <rect x="340" y="262" width="32" height="378" fill="url(#awnRed)"/>
+  <rect x="868" y="262" width="32" height="378" fill="url(#awnRed)"/>
+  <rect x="340" y="614" width="32" height="10" fill="#e0cfa9"/>
+  <rect x="868" y="614" width="32" height="10" fill="#e0cfa9"/>
+
+  <!-- shelf + full 3-2-1 can pyramid -->
+  <rect x="440" y="470" width="360" height="14" fill="url(#woodGrad)"/>
+  <line x1="440" y1="470" x2="800" y2="470" stroke="#ffcf7a" stroke-width="2" opacity="0.4"/>
+  <ellipse cx="620" cy="471" rx="110" ry="6" fill="#000000" opacity="0.35"/>
+  <use href="#can" transform="translate(576,470)"/>
+  <use href="#can" transform="translate(620,470)"/>
+  <use href="#can" transform="translate(664,470)"/>
+  <use href="#can" transform="translate(598,422)"/>
+  <use href="#can" transform="translate(642,422)"/>
+  <use href="#can" transform="translate(620,374)"/>
+
+  <!-- idle score panel -->
+  <line x1="540" y1="270" x2="540" y2="282" stroke="#3a3a6a" stroke-width="3"/>
+  <line x1="700" y1="270" x2="700" y2="282" stroke="#3a3a6a" stroke-width="3"/>
+  <ellipse cx="620" cy="312" rx="180" ry="66" fill="url(#panelGlow)" opacity="0.8"/>
+  <rect x="510" y="282" width="220" height="60" rx="10" fill="#0d0d24" stroke="#ffb347" stroke-width="2.5"/>
+  <text x="620" y="310" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="24" letter-spacing="2" fill="#f5e9d0">SCORE 00</text>
+  <circle cx="596" cy="326" r="6" fill="#f5e9d0"/>
+  <circle cx="620" cy="326" r="6" fill="#f5e9d0"/>
+  <circle cx="644" cy="326" r="6" fill="#f5e9d0"/>
+
+  <!-- counter with 3 waiting softballs -->
+  <ellipse cx="470" cy="541" rx="21" ry="5" fill="#000000" opacity="0.4"/>
+  <ellipse cx="516" cy="541" rx="21" ry="5" fill="#000000" opacity="0.4"/>
+  <ellipse cx="562" cy="541" rx="21" ry="5" fill="#000000" opacity="0.4"/>
+  <circle cx="470" cy="523" r="17" fill="url(#ballGrad)"/>
+  <circle cx="516" cy="523" r="17" fill="url(#ballGrad)"/>
+  <circle cx="562" cy="523" r="17" fill="url(#ballGrad)"/>
+  <path d="M 458 512 Q 470 506 480 512" fill="none" stroke="#d4a86a" stroke-width="2" opacity="0.7"/>
+  <path d="M 504 512 Q 516 506 526 512" fill="none" stroke="#d4a86a" stroke-width="2" opacity="0.7"/>
+  <path d="M 550 512 Q 562 506 572 512" fill="none" stroke="#d4a86a" stroke-width="2" opacity="0.7"/>
+  <rect x="356" y="540" width="528" height="14" fill="url(#awnCream)"/>
+  <rect x="356" y="554" width="528" height="70" rx="4" fill="url(#awnRed)"/>
+  <line x1="366" y1="612" x2="874" y2="612" stroke="#f5e9d0" stroke-width="3" opacity="0.5"/>
+
+  <!-- marquee sign -->
+  <ellipse cx="620" cy="118" rx="310" ry="86" fill="url(#panelGlow)" opacity="0.7"/>
+  <rect x="400" y="76" width="440" height="84" rx="18" fill="url(#awnRed)" stroke="#f5e9d0" stroke-width="4"/>
+  <text x="620" y="132" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="42" letter-spacing="4" fill="#f5e9d0">TIN CAN ALLEY</text>
+  <g fill="#ffd88a">
+    <circle cx="418" cy="94" r="5"/>
+    <circle cx="822" cy="94" r="5"/>
+    <circle cx="418" cy="142" r="5"/>
+    <circle cx="822" cy="142" r="5"/>
+    <circle cx="520" cy="84" r="4" opacity="0.8"/>
+    <circle cx="720" cy="84" r="4" opacity="0.8"/>
+  </g>
+  <rect x="470" y="158" width="12" height="14" fill="url(#woodGrad)"/>
+  <rect x="758" y="158" width="12" height="14" fill="url(#woodGrad)"/>
+
+  <!-- striped awning with scalloped fringe -->
+  <g clip-path="url(#awnClip)">
+    <rect x="348" y="168" width="544" height="100" fill="url(#awnCream)"/>
+    <rect x="372" y="168" width="56" height="100" fill="url(#awnRed)"/>
+    <rect x="484" y="168" width="56" height="100" fill="url(#awnRed)"/>
+    <rect x="596" y="168" width="56" height="100" fill="url(#awnRed)"/>
+    <rect x="708" y="168" width="56" height="100" fill="url(#awnRed)"/>
+    <rect x="820" y="168" width="56" height="100" fill="url(#awnRed)"/>
+  </g>
+  <rect x="372" y="158" width="496" height="10" rx="5" fill="url(#woodGrad)"/>
+  <g>
+    <circle cx="368" cy="268" r="20" fill="url(#awnRed)"/>
+    <circle cx="416" cy="268" r="20" fill="url(#awnCream)"/>
+    <circle cx="464" cy="268" r="20" fill="url(#awnRed)"/>
+    <circle cx="512" cy="268" r="20" fill="url(#awnCream)"/>
+    <circle cx="560" cy="268" r="20" fill="url(#awnRed)"/>
+    <circle cx="608" cy="268" r="20" fill="url(#awnCream)"/>
+    <circle cx="656" cy="268" r="20" fill="url(#awnRed)"/>
+    <circle cx="704" cy="268" r="20" fill="url(#awnCream)"/>
+    <circle cx="752" cy="268" r="20" fill="url(#awnRed)"/>
+    <circle cx="800" cy="268" r="20" fill="url(#awnCream)"/>
+    <circle cx="848" cy="268" r="20" fill="url(#awnRed)"/>
+    <circle cx="892" cy="268" r="20" fill="url(#awnCream)"/>
+  </g>
+
+  <!-- LAYER 7: foreground accents -->
+  <rect x="60" y="428" width="18" height="472" fill="#14142e"/>
+  <path d="M 78 440 Q 220 520 372 268" fill="none" stroke="#26264e" stroke-width="3" opacity="0.8"/>
+  <circle cx="150" cy="478" r="16" fill="url(#bulbGlow)"/><circle cx="150" cy="478" r="5" fill="#f0c169" opacity="0.9"/>
+  <circle cx="248" cy="490" r="16" fill="url(#bulbGlow)"/><circle cx="248" cy="490" r="5" fill="#f0c169" opacity="0.9"/>
+  <ellipse cx="180" cy="852" rx="90" ry="12" fill="#04040f" opacity="0.8"/>
+  <ellipse cx="1420" cy="868" rx="120" ry="14" fill="#04040f" opacity="0.8"/>
+  <ellipse cx="980" cy="700" rx="10" ry="3" fill="#0a0a1e" opacity="0.9"/>
+  <ellipse cx="1060" cy="742" rx="14" ry="4" fill="#0a0a1e" opacity="0.9"/>
+  <ellipse cx="330" cy="742" rx="12" ry="3.5" fill="#0a0a1e" opacity="0.9"/>
+
+  <!-- LAYER 8: vignette -->
+  <rect x="0" y="0" width="1600" height="900" fill="url(#vign)"/>
+</svg>

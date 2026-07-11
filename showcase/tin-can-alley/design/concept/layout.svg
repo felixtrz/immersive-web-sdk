@@ -1,0 +1,368 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 880" width="1200" height="880" role="img" aria-labelledby="t d">
+  <title id="t">Tin Can Alley — play-space layout, top-down, 4 x 4 m</title>
+  <desc id="d">Top-down technical plan of the Tin Can Alley VR booth: player origin, counter with 3 balls, can shelf with 6-can pyramid, score panel and reset button, with meter dimensions, scale bar, entity placement table and booth front elevation detail.</desc>
+
+  <defs>
+    <marker id="arrInk" viewBox="0 0 8 6" refX="7" refY="3" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#C7CDD4"/>
+    </marker>
+    <marker id="arrAmber" viewBox="0 0 8 6" refX="7" refY="3" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#FFB347"/>
+    </marker>
+    <marker id="arrBright" viewBox="0 0 9 7" refX="8" refY="3.5" markerWidth="9" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#F6EEDC"/>
+    </marker>
+  </defs>
+
+  <style>
+    text { font-family:'DejaVu Sans Mono','SF Mono',Menlo,Consolas,monospace; fill:#C7CDD4; }
+    .s9  { font-size:9px; }
+    .s95 { font-size:9.5px; }
+    .s10 { font-size:10px; }
+    .s105{ font-size:10.5px; }
+    .s11 { font-size:11px; }
+    .s12 { font-size:12px; }
+    .s14 { font-size:14px; }
+    .s21 { font-size:21px; font-weight:700; }
+    .b   { fill:#F6EEDC; }
+    .a   { fill:#FFB347; }
+    .mut { opacity:.72; }
+    .hd  { fill:#FFB347; letter-spacing:.12em; }
+    .mid { text-anchor:middle; }
+    .end { text-anchor:end; }
+    .chiptxt { font-size:10px; font-weight:700; fill:#120C2E; text-anchor:middle; }
+    .dimln { stroke:#C7CDD4; stroke-width:1; opacity:.6; }
+    .extln { stroke:#C7CDD4; stroke-width:1; opacity:.28; }
+    .ldr   { stroke:#C7CDD4; stroke-width:1; opacity:.42; }
+  </style>
+
+  <!-- ======================= background ======================= -->
+  <rect x="0" y="0" width="1200" height="880" fill="#120C2E"/>
+
+  <!-- ======================= sheet header (left) ======================= -->
+  <text x="90" y="60" class="s14 b">TOP-DOWN PLAN — 4 x 4 m PLAY SPACE</text>
+  <text x="90" y="77" class="s10 mut">player origin at (0,0) - booth along -Z - all units meters</text>
+
+  <!-- ======================= play area + grid ======================= -->
+  <rect x="90" y="90" width="600" height="600" fill="#1B1345"/>
+  <g stroke="#C7CDD4" stroke-width="1" opacity=".05">
+    <line x1="165" y1="90" x2="165" y2="690"/><line x1="315" y1="90" x2="315" y2="690"/>
+    <line x1="465" y1="90" x2="465" y2="690"/><line x1="615" y1="90" x2="615" y2="690"/>
+    <line x1="90" y1="165" x2="690" y2="165"/><line x1="90" y1="315" x2="690" y2="315"/>
+    <line x1="90" y1="465" x2="690" y2="465"/><line x1="90" y1="615" x2="690" y2="615"/>
+  </g>
+  <g stroke="#C7CDD4" stroke-width="1" opacity=".09">
+    <line x1="240" y1="90" x2="240" y2="690"/><line x1="390" y1="90" x2="390" y2="690"/>
+    <line x1="540" y1="90" x2="540" y2="690"/>
+    <line x1="90" y1="240" x2="690" y2="240"/><line x1="90" y1="390" x2="690" y2="390"/>
+    <line x1="90" y1="540" x2="690" y2="540"/>
+  </g>
+  <!-- play boundary (drawn under labels; label text may break the line) -->
+  <rect x="90" y="90" width="600" height="600" fill="none" stroke="#C7CDD4" stroke-width="1.5" stroke-dasharray="9 6" opacity=".8"/>
+
+  <!-- M3 throw line (under objects) -->
+  <line x1="390" y1="456" x2="390" y2="134" stroke="#FFB347" stroke-width="1.3" stroke-dasharray="7 5" opacity=".65" marker-end="url(#arrAmber)"/>
+  <text x="379" y="400" class="s10 a" text-anchor="middle" transform="rotate(-90 379 400)">M3 THROW ~2.8 m</text>
+
+  <!-- M2 force-pull line (ball -> hand at origin) -->
+  <line x1="347" y1="224" x2="372" y2="492" stroke="#FFB347" stroke-width="1.1" stroke-dasharray="5 4" opacity=".5" marker-end="url(#arrAmber)"/>
+  <text x="352" y="396" class="s10 a end">M2 DISTANCE-GRAB</text>
+  <text x="352" y="409" class="s9 mut end">(ray + trigger pull)</text>
+
+  <!-- ======================= booth structure ======================= -->
+  <!-- booth footprint z -3.0 .. -2.5 -->
+  <rect x="240" y="90" width="300" height="75" fill="#E23B3B" fill-opacity=".10" stroke="#E23B3B" stroke-opacity=".5" stroke-width="1.2"/>
+  <!-- counter z -2.5 .. -1.9, 2.0 m wide -->
+  <rect x="240" y="165" width="300" height="90" fill="#F6EEDC" fill-opacity=".06" stroke="#C7CDD4" stroke-opacity=".55" stroke-width="1"/>
+  <!-- booth front line z = -2.50 -->
+  <line x1="240" y1="165" x2="540" y2="165" stroke="#F6EEDC" stroke-width="2" opacity=".85"/>
+  <!-- can shelf z -2.88 .. -2.72, 1.6 m wide -->
+  <rect x="270" y="108" width="240" height="24" fill="#C7CDD4" fill-opacity=".08" stroke="#C7CDD4" stroke-opacity=".5" stroke-width="1"/>
+  <!-- score panel (overhead, y 1.90) shown dashed, z = -2.90, 1.2 m wide -->
+  <line x1="300" y1="105" x2="480" y2="105" stroke="#FFB347" stroke-width="3" stroke-dasharray="7 5" opacity=".9"/>
+  <!-- reset button on panel, x = +0.45 -->
+  <rect x="453" y="100" width="9" height="10" fill="#E23B3B" stroke="#FFD98A" stroke-width=".8"/>
+
+  <!-- ======================= cans (top view) ======================= -->
+  <!-- base row y 1.20 : x -0.18 / 0.00 / +0.18 -->
+  <g fill="#C7CDD4" fill-opacity=".18" stroke="#C7CDD4" stroke-width="1.2">
+    <circle cx="363" cy="120" r="9"/><circle cx="390" cy="120" r="9"/><circle cx="417" cy="120" r="9"/>
+  </g>
+  <!-- mid row y 1.46 (dashed = stacked above) : x -0.09 / +0.09 -->
+  <g fill="none" stroke="#C7CDD4" stroke-width="1" stroke-dasharray="3 2.5" opacity=".55">
+    <circle cx="376.5" cy="120" r="9"/><circle cx="403.5" cy="120" r="9"/>
+  </g>
+  <!-- top can y 1.72 (dotted) : x 0.00 -->
+  <circle cx="390" cy="120" r="9" fill="none" stroke="#C7CDD4" stroke-width="1" stroke-dasharray="1.5 3" opacity=".4"/>
+
+  <!-- cans label -->
+  <rect x="268" y="139" width="26" height="15" rx="3" fill="#FFB347"/>
+  <text x="281" y="150" class="chiptxt">M4</text>
+  <text x="300" y="150" class="s105 b">CAN PYRAMID x6</text>
+  <text x="398" y="150" class="s95 mut">SEE DETAIL A</text>
+
+  <!-- ======================= balls on counter ======================= -->
+  <!-- y 0.95, z -2.20, x -0.30 / 0.00 / +0.30 -->
+  <g fill="#F6EEDC" fill-opacity=".9" stroke="#FFD98A" stroke-width="1.2">
+    <circle cx="345" cy="210" r="7.5"/><circle cx="390" cy="210" r="7.5"/><circle cx="435" cy="210" r="7.5"/>
+  </g>
+  <!-- ball spread dimension 0.60 m -->
+  <line x1="345" y1="201" x2="345" y2="186" class="extln"/>
+  <line x1="435" y1="201" x2="435" y2="186" class="extln"/>
+  <line x1="345" y1="190" x2="435" y2="190" class="dimln" marker-start="url(#arrInk)" marker-end="url(#arrInk)"/>
+  <text x="398" y="185" class="s10">0.60 m</text>
+
+  <!-- balls label chips -->
+  <rect x="318" y="231" width="26" height="15" rx="3" fill="#FFB347"/><text x="331" y="242" class="chiptxt">M1</text>
+  <rect x="350" y="231" width="26" height="15" rx="3" fill="#FFB347"/><text x="363" y="242" class="chiptxt">M2</text>
+  <rect x="382" y="231" width="26" height="15" rx="3" fill="#FFB347"/><text x="395" y="242" class="chiptxt">M3</text>
+  <text x="416" y="242" class="s11 b">BALLS x3</text>
+
+  <!-- ======================= booth labels (left column) ======================= -->
+  <rect x="120" y="79" width="118" height="21" fill="#120C2E"/>
+  <rect x="126" y="83" width="26" height="15" rx="3" fill="#FFB347"/><text x="139" y="94" class="chiptxt">M5</text>
+  <text x="230" y="94" class="s11 b end">SCORE PANEL</text>
+  <text x="230" y="108" class="s10 end">[0.00, 1.90, -2.90]</text>
+  <text x="230" y="121" class="s95 mut end">panel 1.2 x 0.5 m</text>
+  <line x1="234" y1="96" x2="296" y2="104" class="ldr"/>
+  <circle cx="299" cy="105" r="1.8" fill="#C7CDD4" opacity=".7"/>
+
+  <text x="230" y="137" class="s10 end">SHELF - top y 1.10</text>
+  <line x1="234" y1="133" x2="266" y2="121" class="ldr"/>
+  <circle cx="269" cy="120" r="1.8" fill="#C7CDD4" opacity=".7"/>
+
+  <!-- reset label (right of booth) -->
+  <rect x="552" y="96" width="26" height="15" rx="3" fill="#FFB347"/><text x="565" y="107" class="chiptxt">M6</text>
+  <text x="586" y="107" class="s11 b">RESET BUTTON</text>
+  <text x="552" y="122" class="s10">[0.45, 1.72, -2.90]</text>
+  <line x1="548" y1="104" x2="466" y2="104" class="ldr"/>
+  <circle cx="463" cy="104" r="1.8" fill="#C7CDD4" opacity=".7"/>
+
+  <!-- booth front tag -->
+  <text x="548" y="159" class="s9 mut">BOOTH FRONT z -2.50</text>
+
+  <!-- ======================= player ======================= -->
+  <circle cx="390" cy="540" r="30" fill="#241B54" stroke="#F6EEDC" stroke-width="2"/>
+  <line x1="378" y1="540" x2="402" y2="540" stroke="#F6EEDC" stroke-width="1" opacity=".55"/>
+  <line x1="390" y1="528" x2="390" y2="552" stroke="#F6EEDC" stroke-width="1" opacity=".55"/>
+  <line x1="390" y1="505" x2="390" y2="466" stroke="#F6EEDC" stroke-width="2" marker-end="url(#arrBright)"/>
+  <text x="390" y="592" class="s11 b mid">PLAYER START — ORIGIN</text>
+  <text x="390" y="607" class="s10 mid">[0.00, 0.00, 0.00] - faces -Z</text>
+
+  <!-- near-grab stance ghost (step up to counter) -->
+  <circle cx="390" cy="337.5" r="30" fill="none" stroke="#C7CDD4" stroke-width="1.2" stroke-dasharray="5 4" opacity=".5"/>
+  <path d="M 305 307.5 A 90.2 90.2 0 0 1 475 307.5" fill="none" stroke="#C7CDD4" stroke-width="1" stroke-dasharray="2 4" opacity=".45"/>
+  <text x="300" y="296" class="s9 mut end">reach ~0.6 m</text>
+  <text x="454" y="352" class="s10">M1 STANCE</text>
+  <text x="454" y="364" class="s9 mut">(step up)</text>
+  <line x1="450" y1="348" x2="424" y2="343" class="ldr"/>
+
+  <!-- counter tag -->
+  <text x="400" y="292" class="s10">COUNTER top y 0.90</text>
+  <text x="400" y="305" class="s9 mut">front z -1.90</text>
+
+  <!-- ======================= play boundary labels ======================= -->
+  <text x="100" y="650" class="s11 b">PLAY SPACE 4.0 x 4.0 m</text>
+  <text x="100" y="664" class="s95 mut">standing - stationary - no locomotion</text>
+  <text x="688" y="84" class="s9 mut end">x +2, z -3</text>
+  <text x="96" y="682" class="s9 mut">x -2, z +1</text>
+  <text x="684" y="682" class="s9 mut end">x +2, z +1</text>
+
+  <!-- ======================= axes indicator ======================= -->
+  <line x1="608" y1="652" x2="660" y2="652" stroke="#F6EEDC" stroke-width="1.5" marker-end="url(#arrBright)"/>
+  <line x1="608" y1="652" x2="608" y2="600" stroke="#F6EEDC" stroke-width="1.5" marker-end="url(#arrBright)"/>
+  <circle cx="608" cy="652" r="2.2" fill="#F6EEDC"/>
+  <text x="670" y="656" class="s11 b">+X</text>
+  <text x="608" y="590" class="s10 b mid">-Z (forward)</text>
+
+  <!-- ======================= dimensions ======================= -->
+  <!-- overall 4.0 m (left) -->
+  <line x1="90" y1="90" x2="58" y2="90" class="extln"/>
+  <line x1="90" y1="690" x2="58" y2="690" class="extln"/>
+  <line x1="64" y1="90" x2="64" y2="690" class="dimln" marker-start="url(#arrInk)" marker-end="url(#arrInk)"/>
+  <text x="54" y="390" class="s10 mid" transform="rotate(-90 54 390)">4.0 m</text>
+  <!-- overall 4.0 m (bottom) -->
+  <line x1="90" y1="690" x2="90" y2="722" class="extln"/>
+  <line x1="690" y1="690" x2="690" y2="722" class="extln"/>
+  <line x1="90" y1="716" x2="690" y2="716" class="dimln" marker-start="url(#arrInk)" marker-end="url(#arrInk)"/>
+  <text x="390" y="711" class="s10 mid">4.0 m</text>
+  <!-- player -> ball row 2.2 m -->
+  <line x1="447" y1="210" x2="586" y2="210" class="extln"/>
+  <line x1="424" y1="540" x2="638" y2="540" class="extln"/>
+  <line x1="572" y1="210" x2="572" y2="540" class="dimln" marker-start="url(#arrInk)" marker-end="url(#arrInk)"/>
+  <text x="562" y="375" class="s10 mid" transform="rotate(-90 562 375)">2.2 m</text>
+  <text x="578" y="206" class="s9 mut">z -2.20</text>
+  <!-- player -> booth front 2.5 m -->
+  <line x1="540" y1="165" x2="638" y2="165" class="extln"/>
+  <line x1="624" y1="165" x2="624" y2="540" class="dimln" marker-start="url(#arrInk)" marker-end="url(#arrInk)"/>
+  <text x="614" y="352" class="s10 mid" transform="rotate(-90 614 352)">2.5 m</text>
+  <!-- booth width 2.0 m -->
+  <line x1="240" y1="258" x2="240" y2="284" class="extln"/>
+  <line x1="540" y1="258" x2="540" y2="284" class="extln"/>
+  <line x1="240" y1="278" x2="540" y2="278" class="dimln" marker-start="url(#arrInk)" marker-end="url(#arrInk)"/>
+  <text x="398" y="272" class="s10">2.0 m</text>
+
+  <!-- ======================= scale bar ======================= -->
+  <rect x="90" y="736" width="75" height="8" fill="#C7CDD4"/>
+  <rect x="165" y="736" width="75" height="8" fill="none" stroke="#C7CDD4" stroke-width="1"/>
+  <text x="90" y="758" class="s10 mid">0</text>
+  <text x="165" y="758" class="s10 mid">0.5</text>
+  <text x="240" y="758" class="s10 mid">1 m</text>
+  <text x="262" y="745" class="s95 mut">SCALE — grid 0.5 m</text>
+
+  <!-- ======================= mechanics legend ======================= -->
+  <rect x="90" y="772" width="600" height="94" rx="4" fill="#1B1345" stroke="#C7CDD4" stroke-opacity=".25"/>
+  <text x="104" y="792" class="s11 hd">MECHANICS — GAME_SPEC.md</text>
+  <g>
+    <rect x="104" y="799" width="24" height="14" rx="3" fill="#FFB347"/><text x="116" y="810" class="chiptxt">M1</text>
+    <text x="134" y="810" class="s10">NEAR GRAB — squeeze at counter</text>
+    <rect x="104" y="817" width="24" height="14" rx="3" fill="#FFB347"/><text x="116" y="828" class="chiptxt">M2</text>
+    <text x="134" y="828" class="s10">DISTANCE GRAB — ray + trigger pull</text>
+    <rect x="104" y="835" width="24" height="14" rx="3" fill="#FFB347"/><text x="116" y="846" class="chiptxt">M3</text>
+    <text x="134" y="846" class="s10">THROW — release velocity (physics)</text>
+    <rect x="396" y="799" width="24" height="14" rx="3" fill="#FFB347"/><text x="408" y="810" class="chiptxt">M4</text>
+    <text x="426" y="810" class="s10">KNOCKDOWN — off shelf / tips &gt;45 deg</text>
+    <rect x="396" y="817" width="24" height="14" rx="3" fill="#FFB347"/><text x="408" y="828" class="chiptxt">M5</text>
+    <text x="426" y="828" class="s10">ROUND STATE — 3 balls, score panel</text>
+    <rect x="396" y="835" width="24" height="14" rx="3" fill="#FFB347"/><text x="408" y="846" class="chiptxt">M6</text>
+    <text x="426" y="846" class="s10">RESET — restack cans, return balls</text>
+  </g>
+
+  <!-- ======================= title block (right column) ======================= -->
+  <rect x="720" y="40" width="460" height="128" rx="4" fill="#1B1345" stroke="#C7CDD4" stroke-opacity=".3"/>
+  <text x="740" y="72" class="s21 b">TIN CAN ALLEY</text>
+  <line x1="740" y1="84" x2="900" y2="84" stroke="#E23B3B" stroke-width="2.5"/>
+  <text x="740" y="106" class="s12 hd">PLAY-SPACE LAYOUT — TOP-DOWN</text>
+  <line x1="736" y1="118" x2="1164" y2="118" stroke="#C7CDD4" stroke-opacity=".2"/>
+  <text x="740" y="136" class="s10">UNITS m - 1 m = 150 px - COORDS [x,y,z], y-up, -Z fwd</text>
+  <text x="740" y="152" class="s10 mut">PHASE 2 CONCEPT - IWSDK SHOWCASE - GAME_SPEC.md - 2026-07-11</text>
+
+  <!-- ======================= DETAIL A: booth front elevation ======================= -->
+  <rect x="720" y="188" width="460" height="318" rx="4" fill="#1B1345" stroke="#C7CDD4" stroke-opacity=".3"/>
+  <text x="736" y="210" class="s11 hd">DETAIL A — BOOTH FRONT ELEVATION (from player)</text>
+  <text x="1164" y="210" class="s9 mut end">1 m = 80 px</text>
+
+  <!-- floor + hatch -->
+  <line x1="740" y1="470" x2="944" y2="470" stroke="#C7CDD4" stroke-width="1.5" opacity=".8"/>
+  <g stroke="#C7CDD4" stroke-width="1" opacity=".35">
+    <line x1="756" y1="470" x2="750" y2="477"/><line x1="780" y1="470" x2="774" y2="477"/>
+    <line x1="804" y1="470" x2="798" y2="477"/><line x1="828" y1="470" x2="822" y2="477"/>
+    <line x1="852" y1="470" x2="846" y2="477"/><line x1="876" y1="470" x2="870" y2="477"/>
+    <line x1="900" y1="470" x2="894" y2="477"/><line x1="924" y1="470" x2="918" y2="477"/>
+  </g>
+  <!-- height ruler -->
+  <line x1="758" y1="470" x2="758" y2="270" stroke="#C7CDD4" stroke-width="1" opacity=".5"/>
+  <g stroke="#C7CDD4" stroke-width="1" opacity=".5">
+    <line x1="753" y1="470" x2="758" y2="470"/><line x1="753" y1="430" x2="758" y2="430"/>
+    <line x1="753" y1="390" x2="758" y2="390"/><line x1="753" y1="350" x2="758" y2="350"/>
+    <line x1="753" y1="310" x2="758" y2="310"/><line x1="753" y1="270" x2="758" y2="270"/>
+  </g>
+  <text x="750" y="473" class="s9 mut end">0</text>
+  <text x="750" y="433" class="s9 mut end">0.5</text>
+  <text x="750" y="393" class="s9 mut end">1.0</text>
+  <text x="750" y="353" class="s9 mut end">1.5</text>
+  <text x="750" y="313" class="s9 mut end">2.0</text>
+  <text x="750" y="273" class="s9 mut end">2.5</text>
+
+  <!-- booth frame -->
+  <rect x="774" y="278" width="160" height="14" fill="#E23B3B" fill-opacity=".18" stroke="#E23B3B" stroke-opacity=".5"/>
+  <line x1="774" y1="470" x2="774" y2="292" stroke="#E23B3B" stroke-width="1.2" opacity=".5"/>
+  <line x1="934" y1="470" x2="934" y2="292" stroke="#E23B3B" stroke-width="1.2" opacity=".5"/>
+
+  <!-- score panel (behind cans) -->
+  <rect x="806" y="298" width="96" height="40" fill="#FFB347" fill-opacity=".08" stroke="#FFB347" stroke-width="1.2" stroke-opacity=".8"/>
+  <text x="854" y="312" class="a mid" font-size="7.5" opacity=".8">SCORE - BALLS - STATE</text>
+  <rect x="886" y="328" width="9" height="9" fill="#E23B3B" stroke="#FFD98A" stroke-width=".8"/>
+
+  <!-- counter + balls -->
+  <rect x="774" y="398" width="160" height="72" fill="#F6EEDC" fill-opacity=".07" stroke="#C7CDD4" stroke-opacity=".55"/>
+  <g fill="#F6EEDC" fill-opacity=".9">
+    <circle cx="830" cy="394" r="4"/><circle cx="854" cy="394" r="4"/><circle cx="878" cy="394" r="4"/>
+  </g>
+  <!-- shelf board -->
+  <rect x="790" y="382" width="128" height="4.5" fill="#C7CDD4" fill-opacity=".3" stroke="#C7CDD4" stroke-opacity=".5" stroke-width=".7"/>
+
+  <!-- cans: 3-2-1 pyramid, dia 0.12 x h 0.26 -->
+  <g fill="#C7CDD4" fill-opacity=".2" stroke="#C7CDD4" stroke-width="1">
+    <rect x="834.8" y="361.2" width="9.6" height="20.8"/>
+    <rect x="849.2" y="361.2" width="9.6" height="20.8"/>
+    <rect x="863.6" y="361.2" width="9.6" height="20.8"/>
+    <rect x="842" y="340.4" width="9.6" height="20.8"/>
+    <rect x="856.4" y="340.4" width="9.6" height="20.8"/>
+    <rect x="849.2" y="319.6" width="9.6" height="20.8"/>
+  </g>
+  <g stroke="#E23B3B" stroke-width="1.6" opacity=".7">
+    <line x1="834.8" y1="371.6" x2="844.4" y2="371.6"/>
+    <line x1="849.2" y1="371.6" x2="858.8" y2="371.6"/>
+    <line x1="863.6" y1="371.6" x2="873.2" y2="371.6"/>
+    <line x1="842" y1="350.8" x2="851.6" y2="350.8"/>
+    <line x1="856.4" y1="350.8" x2="866" y2="350.8"/>
+    <line x1="849.2" y1="330" x2="858.8" y2="330"/>
+  </g>
+
+  <!-- eye height reference -->
+  <line x1="744" y1="342" x2="948" y2="342" stroke="#C7CDD4" stroke-width="1" stroke-dasharray="4 4" opacity=".35"/>
+
+  <!-- elevation callouts -->
+  <line x1="902" y1="300" x2="950" y2="268" class="ldr"/>
+  <text x="958" y="268" class="s10"><tspan class="a">M5</tspan> panel  [0.00, 1.90, -2.90]</text>
+  <text x="958" y="282" class="s95 mut">1.2 x 0.5 m - faces player</text>
+  <line x1="896" y1="332" x2="950" y2="302" class="ldr"/>
+  <text x="958" y="305" class="s10"><tspan class="a">M6</tspan> reset  [0.45, 1.72, -2.90]</text>
+  <line x1="948" y1="342" x2="954" y2="325" class="ldr"/>
+  <text x="958" y="327" class="s95 mut">eye height ~1.6 m (standing)</text>
+  <line x1="873.2" y1="368" x2="950" y2="346" class="ldr"/>
+  <text x="958" y="349" class="s10"><tspan class="a">M4</tspan> cans x6  dia 0.12, h 0.26</text>
+  <text x="958" y="363" class="s95 mut">rows y 1.20 / 1.46 / 1.72</text>
+  <text x="958" y="377" class="s95 mut">dx 0.18 m - dy 0.26 m - z -2.80</text>
+  <line x1="918" y1="384" x2="950" y2="396" class="ldr"/>
+  <text x="958" y="399" class="s10">shelf top y 1.10 - w 1.6 m</text>
+  <line x1="934" y1="420" x2="950" y2="418" class="ldr"/>
+  <text x="958" y="421" class="s10">counter top y 0.90 - 2.0 x 0.6 m</text>
+  <text x="958" y="435" class="s95 mut">balls rest y 0.95</text>
+  <line x1="944" y1="470" x2="950" y2="456" class="ldr"/>
+  <text x="958" y="459" class="s10">floor y 0 - static physics plane</text>
+
+  <!-- ======================= entity placement table ======================= -->
+  <rect x="720" y="522" width="460" height="238" rx="4" fill="#1B1345" stroke="#C7CDD4" stroke-opacity=".3"/>
+  <text x="736" y="544" class="s11 hd">ENTITY PLACEMENT — meters (lift into Phase 4)</text>
+  <g fill="#C7CDD4" opacity=".04">
+    <rect x="728" y="571" width="444" height="13"/>
+    <rect x="728" y="597" width="444" height="13"/>
+    <rect x="728" y="623" width="444" height="13"/>
+    <rect x="728" y="649" width="444" height="13"/>
+    <rect x="728" y="675" width="444" height="13"/>
+    <rect x="728" y="701" width="444" height="13"/>
+    <rect x="728" y="727" width="444" height="13"/>
+  </g>
+  <g class="s95" opacity=".62">
+    <text x="736" y="564">ENTITY</text>
+    <text x="820" y="564">POSITION [X, Y, Z]</text>
+    <text x="952" y="564">NOTE</text>
+    <text x="1100" y="564">MECH</text>
+  </g>
+  <g class="s10">
+    <text x="736" y="581">ball A</text><text x="820" y="581">[-0.30, 0.95, -2.20]</text><text x="952" y="581" class="mut">r 0.05, on counter</text><text x="1100" y="581" class="a">M1 M2 M3</text>
+    <text x="736" y="594">ball B</text><text x="820" y="594">[ 0.00, 0.95, -2.20]</text><text x="952" y="594" class="mut">r 0.05</text><text x="1100" y="594" class="a">M1 M2 M3</text>
+    <text x="736" y="607">ball C</text><text x="820" y="607">[ 0.30, 0.95, -2.20]</text><text x="952" y="607" class="mut">r 0.05</text><text x="1100" y="607" class="a">M1 M2 M3</text>
+    <text x="736" y="620">can 1</text><text x="820" y="620">[-0.18, 1.20, -2.80]</text><text x="952" y="620" class="mut">dia 0.12, h 0.26</text><text x="1100" y="620" class="a">M4</text>
+    <text x="736" y="633">can 2</text><text x="820" y="633">[ 0.00, 1.20, -2.80]</text><text x="952" y="633" class="mut">base row</text><text x="1100" y="633" class="a">M4</text>
+    <text x="736" y="646">can 3</text><text x="820" y="646">[ 0.18, 1.20, -2.80]</text><text x="952" y="646" class="mut">base row</text><text x="1100" y="646" class="a">M4</text>
+    <text x="736" y="659">can 4</text><text x="820" y="659">[-0.09, 1.46, -2.80]</text><text x="952" y="659" class="mut">mid row</text><text x="1100" y="659" class="a">M4</text>
+    <text x="736" y="672">can 5</text><text x="820" y="672">[ 0.09, 1.46, -2.80]</text><text x="952" y="672" class="mut">mid row</text><text x="1100" y="672" class="a">M4</text>
+    <text x="736" y="685">can 6</text><text x="820" y="685">[ 0.00, 1.72, -2.80]</text><text x="952" y="685" class="mut">top</text><text x="1100" y="685" class="a">M4</text>
+    <text x="736" y="698">counter</text><text x="820" y="698">[ 0.00, 0.45, -2.20]</text><text x="952" y="698" class="mut">box 2.0x0.9x0.6</text><text x="1100" y="698">-</text>
+    <text x="736" y="711">shelf</text><text x="820" y="711">[ 0.00, 1.05, -2.80]</text><text x="952" y="711" class="mut">box 1.6x0.1x0.25</text><text x="1100" y="711">-</text>
+    <text x="736" y="724">panel</text><text x="820" y="724">[ 0.00, 1.90, -2.90]</text><text x="952" y="724" class="mut">1.2x0.5, face +Z</text><text x="1100" y="724" class="a">M5</text>
+    <text x="736" y="737">reset</text><text x="820" y="737">[ 0.45, 1.72, -2.90]</text><text x="952" y="737" class="mut">on panel</text><text x="1100" y="737" class="a">M6</text>
+    <text x="736" y="750">player</text><text x="820" y="750">[ 0.00, 0.00,  0.00]</text><text x="952" y="750" class="mut">faces -Z</text><text x="1100" y="750">-</text>
+  </g>
+
+  <!-- ======================= notes ======================= -->
+  <rect x="720" y="772" width="460" height="94" rx="4" fill="#1B1345" stroke="#C7CDD4" stroke-opacity=".3"/>
+  <text x="736" y="792" class="s11 hd">NOTES</text>
+  <text x="736" y="810" class="s95">- panel readable from origin (2.9 m): score glyph cap height &gt;= 0.03 m</text>
+  <text x="736" y="825" class="s95">- top can peak ~y 1.85 clips panel lower edge (1.65): keep text upper 2/3</text>
+  <text x="736" y="840" class="s95">- floor = static physics plane: stray balls / cans settle in bounds</text>
+  <text x="736" y="855" class="s95">- M1 needs a step to the counter; M2 force-pull works from origin</text>
+</svg>
