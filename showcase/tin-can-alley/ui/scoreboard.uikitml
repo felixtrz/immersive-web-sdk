@@ -1,0 +1,119 @@
+<style>
+  #panel-root {
+    width: 700;
+    display: flex;
+    flex-direction: column;
+    background-color: #241b54;
+    border-color: #ffb347;
+    border-width: 3;
+    border-radius: 24;
+    padding: 18;
+    gap: 12;
+  }
+
+  #header {
+    display: flex;
+    justify-content: center;
+    background-color: #120c2e;
+    border-radius: 14;
+    border-width: 1.5;
+    border-color: #ffb347;
+    padding: 10;
+  }
+
+  #title {
+    font-size: 34;
+    font-weight: bold;
+    color: #f6eedc;
+    letter-spacing: 8;
+    text-align: center;
+  }
+
+  .stat-row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 12;
+  }
+
+  .stat-cell {
+    flex-grow: 1;
+    flex-basis: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #120c2e;
+    border-radius: 14;
+    border-width: 1.5;
+    border-color: #ffb347;
+    padding: 10;
+    gap: 4;
+  }
+
+  .stat-label {
+    font-size: 18;
+    font-weight: bold;
+    color: #f6eedc;
+    letter-spacing: 5;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 60;
+    font-weight: bold;
+    color: #ffb347;
+    text-align: center;
+  }
+
+  #round-state {
+    font-size: 30;
+    font-weight: bold;
+    color: #e23b3b;
+    letter-spacing: 3;
+    text-align: center;
+  }
+
+  #reset-button {
+    width: 100%;
+    padding: 14;
+    background-color: #e23b3b;
+    color: #f6eedc;
+    border-radius: 14;
+    border-width: 2;
+    border-color: #ffb347;
+    font-size: 28;
+    font-weight: bold;
+    letter-spacing: 6;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  #reset-button:hover {
+    background-color: #f05555;
+  }
+
+  #reset-button:active {
+    background-color: #b02c2c;
+  }
+</style>
+<div id="panel-root">
+  <div id="header">
+    <text id="title">TIN CAN ALLEY</text>
+  </div>
+  <div class="stat-row">
+    <div class="stat-cell">
+      <text class="stat-label">SCORE</text>
+      <text id="score-value" class="stat-value">0</text>
+    </div>
+    <div class="stat-cell">
+      <text class="stat-label">ROUND</text>
+      <text id="round-state">THROW!</text>
+    </div>
+    <div class="stat-cell">
+      <text class="stat-label">BALLS</text>
+      <text id="balls-value" class="stat-value">3</text>
+    </div>
+  </div>
+  <button id="reset-button">RESET</button>
+</div>
