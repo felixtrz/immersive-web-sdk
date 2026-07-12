@@ -1,6 +1,6 @@
-# IWSDK Project - Claude Code Configuration
+# IWSDK Project
 
-This file configures Claude Code for IWSDK (Immersive Web SDK) project development.
+This file provides project context for AI coding assistants working on IWSDK (Immersive Web SDK) projects.
 
 ## Project Structure
 
@@ -261,12 +261,11 @@ root.addComponent(DomeGradient, { sky: [0.2, 0.6, 0.8, 1.0] });
 #### DON'T forget `_needsUpdate` after changing environment properties
 
 ```typescript
-// ❌ BAD - Changes are silently ignored (and setValue THROWS on vector
-// fields in elics 3.4.x — use getVectorView for Vec2/Vec3/Vec4/Color)
+// ❌ BAD - Changes are silently ignored
 root.setValue(DomeGradient, 'sky', [0.1, 0.2, 0.8, 1.0]);
 
-// ✅ GOOD - vector write via getVectorView, then _needsUpdate (scalar)
-root.getVectorView(DomeGradient, 'sky').set([0.1, 0.2, 0.8, 1.0]);
+// ✅ GOOD - Set _needsUpdate to apply changes
+root.setValue(DomeGradient, 'sky', [0.1, 0.2, 0.8, 1.0]);
 root.setValue(DomeGradient, '_needsUpdate', true);
 ```
 
@@ -292,106 +291,36 @@ entity.addComponent(ScreenSpace, { width: '400px', top: '20px' });
 
 ---
 
-## Agents Available
+## Planning Pipeline
 
-### `iwsdk-project-code-reviewer`
-
-Reviews IWSDK project code for correct framework usage, ECS patterns, and performance.
-
-```
-Use the iwsdk-project-code-reviewer agent to review my code
-```
-
----
-
-## Skills Available
-
-### `/iwsdk-planner`
-
-**IWSDK experience pipeline and planning guide**
-
-Use when:
-
-- Building a new experience/game end-to-end (runs a phased ideation → design → grounding → architecture → build → verify → ship pipeline with per-phase artifacts under `design/`)
-- Planning new IWSDK features (quick single-feature checklist)
-- Designing systems/components
-- Need guidance on ECS, signals, or reactive patterns (see its `references/api-reference.md`)
-
-### `/iwsdk-grab`
-
-**Grab objects with emulated controllers**
-
-Use when:
-
-- Picking up, moving, or testing grab interactions
-- Testing OneHandGrabbable or TwoHandsGrabbable (proximity-based, uses squeeze/grip button)
-
-### `/iwsdk-ray`
-
-**Ray-based interactions — click, select, distance-grab**
-
-Use when:
-
-- Pointing at and clicking objects or UI buttons
-- Distance-grabbing with DistanceGrabbable (trigger hold)
-- Testing ray-based selection on Interactable entities
-
-### `/iwsdk-ui`
-
-**Develop and iterate on UI panels**
-
-Use when:
-
-- Working on PanelUI components
-- Editing UIKITML markup
-- Using ScreenSpace for full-screen 2D preview during development
-
-### `/iwsdk-debug`
-
-**Debug continuous behavior frame by frame**
-
-Use when:
-
-- Debugging physics (falling, bouncing, collisions)
-- Debugging animations, game loops, or any real-time behavior
-- Behavior happens too fast to observe — uses ECS pause/step/snapshot/diff
-
-### `/iwsdk-physics`
-
-**Physics implementation guide**
-
-Use when:
-
-- Adding physics simulation (PhysicsBody, PhysicsShape)
-- Configuring rigid bodies, collision shapes, forces
-- Troubleshooting physics behavior
-
-## Planning Rule
-
-When planning any new feature or system, ALWAYS invoke `/iwsdk-planner` first. For a new experience built from an idea, follow its full phased pipeline; for a contained feature, use its Quick Planning checklist. Its `references/api-reference.md` is the API ground truth for grounding and review.
-
----
+If `.claude/skills/iwsdk-planner/SKILL.md` exists in this project, read it
+before planning any new experience or multi-system feature — it defines a
+phased ideation → design → grounding → architecture → build → verify → ship
+pipeline with per-phase artifacts under `design/`, and it is written to work
+without any vendor-specific tools (every step has an inline fallback). Its
+`references/api-reference.md` is the API ground truth to load when writing
+or reviewing IWSDK code.
 
 ## MCP Tools Available
 
-### IWSDK Reference (Code Intelligence)
+### IWSDK-RAG (Code Intelligence)
 
 Semantic code search and API lookup for IWSDK, elics ECS, and dependencies.
 
 Starter projects install `@iwsdk/reference` by default so these tools are available locally, but they only become usable after reference warmup. Run `npx iwsdk reference warmup` once to download the pinned model and corpus. Set `IWSDK_REFERENCE_ASSETS_BASE_URL` too when you are using an internal or unpublished corpus payload instead of the published `@iwsdk/reference-assets` package. The pinned model file URLs themselves are baked into the SDK, so warmup still requires access to those public URLs unless the shared cache has already been pre-warmed.
 
-| Tool                                         | Purpose                      | When to Use                                              |
-| -------------------------------------------- | ---------------------------- | -------------------------------------------------------- |
-| `mcp__iwsdk-reference__search_code`          | Semantic search across IWSDK | Finding code by description ("how to create VR session") |
-| `mcp__iwsdk-reference__get_api_reference`    | Quick API lookup by name     | When you know the class/function name                    |
-| `mcp__iwsdk-reference__find_by_relationship` | Find code by relationships   | Classes that extend/implement something                  |
-| `mcp__iwsdk-reference__list_ecs_components`  | List all ECS components      | Discovering available components                         |
-| `mcp__iwsdk-reference__list_ecs_systems`     | List all ECS systems         | Discovering available systems                            |
-| `mcp__iwsdk-reference__find_usage_examples`  | Find real-world examples     | Understanding how to use an API                          |
+| Tool                   | Purpose                      | When to Use                                              |
+| ---------------------- | ---------------------------- | -------------------------------------------------------- |
+| `search_code`          | Semantic search across IWSDK | Finding code by description ("how to create VR session") |
+| `get_api_reference`    | Quick API lookup by name     | When you know the class/function name                    |
+| `find_by_relationship` | Find code by relationships   | Classes that extend/implement something                  |
+| `list_ecs_components`  | List all ECS components      | Discovering available components                         |
+| `list_ecs_systems`     | List all ECS systems         | Discovering available systems                            |
+| `find_usage_examples`  | Find real-world examples     | Understanding how to use an API                          |
 
 ### IWER (Immersive Web Emulation Runtime)
 
-WebXR emulator control for testing without a headset. Starter projects expose these tools under `mcp__iwsdk-runtime__`.
+WebXR emulator control for testing without a headset.
 
 **Session**
 
@@ -459,23 +388,17 @@ WebXR emulator control for testing without a headset. Starter projects expose th
 
 **Connection check — always call first:**
 
-```
-mcp__iwsdk-runtime__xr_get_session_status
-```
-
-If your tool environment lazily loads MCP schemas, hydrate the `mcp__iwsdk-runtime__*` tool definitions first. If MCP tools are still deferred, use the CLI (`npx iwsdk xr status`) for the same check.
-
-If this returns a successful connection, the dev server is ALREADY running. Do NOT start another one.
+Call `xr_get_session_status` before doing anything else. In environments with deferred MCP schemas, hydrate the `mcp__iwsdk-runtime__*` tools first or use `npx iwsdk xr status` for the same check. If this returns a successful connection, the dev server is ALREADY running. Do NOT start another one.
 
 **Troubleshooting:**
 
-- Dev server not running → Start with `npm run dev` (CLI-managed) or `npx iwsdk dev up`
+- Dev server not running → Start with `npm run dev` (CLI-managed) or `npx iwsdk dev up` for the explicit runtime-first entrypoint
 - Browser tab in background → Bring to foreground (Chrome throttles background tabs)
-- Session not active → Use `mcp__iwsdk-runtime__xr_accept_session`
+- Session not active → Use `xr_accept_session`
 
 ### hzdb (Meta Quest Device Tools)
 
-Tools for Meta Quest device management and Meta's 3D asset library. All tools are prefixed `mcp__hzdb__`.
+Tools for Meta Quest device management and Meta's 3D asset library.
 
 **3D Asset Search**
 
@@ -585,10 +508,9 @@ Types.Float64; // 64-bit float
 Types.Int8; // 8-bit integer
 Types.Int16; // 16-bit integer
 Types.Int32; // 32-bit integer
+Types.Uint32; // 32-bit unsigned
 Types.Boolean; // true/false
 Types.String; // text
-Types.FilePath; // file path string
-Types.Vec2; // [x, y]
 Types.Vec3; // [x, y, z]
 Types.Vec4; // [x, y, z, w]
 Types.Color; // [r, g, b, a] - RGBA!
@@ -745,31 +667,23 @@ npx tsc --noEmit
 
 Type errors will prevent systems from initializing properly, but may not show errors in the browser console. Always type check after writing code and before testing.
 
-**BEFORE starting a dev server, ALWAYS check if one is already running:**
-
-```
-mcp__iwsdk-runtime__xr_get_session_status
-```
-
-If your tool environment lazily loads MCP schemas, hydrate the `mcp__iwsdk-runtime__*` tool definitions first. If MCP tools are still deferred, use `npx iwsdk xr status` instead.
-
-If this returns a successful connection, the dev server is already running. Do NOT start another one.
+**BEFORE starting a dev server, ALWAYS check if one is already running** by calling `xr_get_session_status`. In environments with deferred MCP schemas, hydrate the `mcp__iwsdk-runtime__*` tools first or use `npx iwsdk xr status`. If this returns a successful connection, the dev server is already running. Do NOT start another one.
 
 1. **Type check first:** `npx tsc --noEmit` - fix any errors before proceeding
-2. Check IWER status first: `mcp__iwsdk-runtime__xr_get_session_status` (or `npx iwsdk xr status` if MCP schemas are still deferred)
+2. Check IWER status first: `xr_get_session_status` (or `npx iwsdk xr status` if MCP schemas are still deferred)
 3. If not connected, start the CLI-managed dev server: `npm run dev`
 4. If you need the resolved runtime URL or port, run `npx iwsdk dev status`
-5. Enter XR: `mcp__iwsdk-runtime__xr_accept_session`
+5. Enter XR: `xr_accept_session`
 6. Test interactions with controller tools
 
 ### Debugging Missing Features
 
 If something isn't appearing or working but no errors show in console:
 
-1. **Don't use level filter for console logs** — call `mcp__iwsdk-runtime__browser_get_console_logs` with just `count`, not `level` filter, as you may miss important errors
+1. **Don't use level filter for console logs** — call `browser_get_console_logs` with just `count`, not `level` filter, as you may miss important errors
 2. **Run type check** — `npx tsc --noEmit` often reveals issues that don't appear as runtime errors
-3. **Check scene hierarchy** — use `mcp__iwsdk-runtime__scene_get_hierarchy` to verify entities exist and find entity indices
+3. **Check scene hierarchy** — use `scene_get_hierarchy` to verify entities exist and find entity indices
 4. **Reload and check logs immediately** — some errors only appear during initialization
-5. **Inspect ECS state** — use `mcp__iwsdk-runtime__ecs_find_entities` to check if entities have expected components, then `mcp__iwsdk-runtime__ecs_query_entity` to read their values
-6. **Diff before/after** — take `mcp__iwsdk-runtime__ecs_snapshot` before and after an action to see exactly what changed (or didn't)
-7. **Isolate systems** — use `mcp__iwsdk-runtime__ecs_toggle_system` to pause suspect systems one at a time to find which causes the issue
+5. **Inspect ECS state** — use `ecs_find_entities` to check if entities have expected components, then `ecs_query_entity` to read their values
+6. **Diff before/after** — take `ecs_snapshot` before and after an action to see exactly what changed (or didn't)
+7. **Isolate systems** — use `ecs_toggle_system` to pause suspect systems one at a time to find which causes the issue

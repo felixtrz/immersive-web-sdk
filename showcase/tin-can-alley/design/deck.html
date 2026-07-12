@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tin Can Alley — Design Deck</title>
+<style>
+  /* ============================================================
+     TIN CAN ALLEY — neon carnival night palette
+     indigo sky   #120C2E  (deep)   / #241B54 (booth indigo)
+     amber lights #FFB347  (glow #FFD98A)
+     carnival red #E23B3B  / canvas cream #F6EEDC
+     tin silver   #C7CDD4
+     ============================================================ */
+  :root {
+    --sky:        #120C2E;
+    --sky-2:      #1B1345;
+    --indigo:     #241B54;
+    --indigo-2:   #2E2268;
+    --amber:      #FFB347;
+    --amber-hi:   #FFD98A;
+    --red:        #E23B3B;
+    --red-deep:   #B3282C;
+    --cream:      #F6EEDC;
+    --silver:     #C7CDD4;
+    --ink-dim:    rgba(246,238,220,.62);
+    --line:       rgba(246,238,220,.14);
+    --glow:       0 0 10px rgba(255,179,71,.85), 0 0 28px rgba(255,179,71,.45), 0 0 64px rgba(255,179,71,.22);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; }
+  body {
+    background:#0A0720;
+    color:var(--cream);
+    font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- 16:9 stage, scaled to fit the window ---- */
+  #viewport { position:fixed; inset:0; display:grid; place-items:center; }
+  #stage {
+    width:1280px; height:720px; position:relative;
+    transform-origin:center center;
+    background:
+      radial-gradient(1100px 600px at 50% -10%, var(--sky-2) 0%, var(--sky) 55%, #0C0822 100%);
+    box-shadow: 0 0 0 1px rgba(255,179,71,.08), 0 30px 80px rgba(0,0,0,.6);
+    border-radius:10px; overflow:hidden;
+  }
+
+  /* ---- slides ---- */
+  .slide { position:absolute; inset:0; padding:52px 72px 64px; display:none; flex-direction:column; }
+  .slide.on { display:flex; }
+
+  .kicker {
+    font-size:14px; font-weight:800; letter-spacing:.42em; text-transform:uppercase;
+    color:var(--amber); text-shadow:0 0 12px rgba(255,179,71,.55);
+    margin-bottom:8px;
+  }
+  h2 {
+    font-size:42px; font-weight:900; letter-spacing:.02em; text-transform:uppercase;
+    color:var(--cream); line-height:1.05; margin-bottom:6px;
+  }
+  .sub { color:var(--ink-dim); font-size:17px; margin-bottom:18px; max-width:900px; }
+
+  .stripe {
+    height:10px; border-radius:5px; margin:10px 0 22px; max-width:340px;
+    background: repeating-linear-gradient(45deg, var(--red) 0 14px, var(--cream) 14px 28px);
+    box-shadow: 0 2px 10px rgba(226,59,59,.35);
+  }
+
+  .card {
+    background: linear-gradient(180deg, var(--indigo) 0%, rgba(36,27,84,.55) 100%);
+    border:1px solid rgba(255,179,71,.22);
+    border-radius:14px; padding:20px 22px;
+  }
+
+  table { width:100%; border-collapse:collapse; }
+  th {
+    text-align:left; font-size:12px; font-weight:800; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--amber); padding:9px 12px; border-bottom:2px solid rgba(255,179,71,.35);
+  }
+  td { padding:9px 12px; border-bottom:1px solid var(--line); font-size:15px; vertical-align:top; }
+  td.num { color:var(--amber); font-weight:800; white-space:nowrap; }
+  .dim { color:var(--ink-dim); }
+
+  /* ---- bulbs (string lights) ---- */
+  .bulbs {
+    height:14px; margin:0 auto;
+    background-image: radial-gradient(circle at 14px 7px, var(--amber-hi) 3px, rgba(255,179,71,.35) 5px, transparent 7px);
+    background-size:28px 14px; background-repeat:repeat-x;
+    filter: drop-shadow(0 0 6px rgba(255,179,71,.8));
+  }
+
+  /* ---- nav chrome ---- */
+  #counter {
+    position:absolute; right:26px; bottom:18px; font-size:13px; font-weight:700;
+    letter-spacing:.2em; color:var(--ink-dim); z-index:10;
+  }
+  #hint {
+    position:absolute; left:26px; bottom:18px; font-size:12px; letter-spacing:.14em;
+    text-transform:uppercase; color:rgba(246,238,220,.32); z-index:10;
+  }
+
+  /* ============ slide 1 : title ============ */
+  .s-title { align-items:center; justify-content:center; text-align:center; }
+  .s-title .bulbs { width:760px; margin-bottom:44px; }
+  .s-title .bulbs.bottom { margin-top:48px; margin-bottom:0; }
+  .marquee {
+    font-size:96px; font-weight:900; letter-spacing:.06em; text-transform:uppercase; line-height:1;
+    color:var(--cream);
+    text-shadow: 0 4px 0 var(--red-deep), 0 6px 0 rgba(0,0,0,.45), var(--glow);
+  }
+  .marquee .amp { color:var(--amber); text-shadow:0 4px 0 var(--red-deep), var(--glow); }
+  .s-title .stripe { max-width:520px; margin:26px auto 22px; }
+  .pitch { font-size:21px; color:var(--cream); max-width:820px; margin:0 auto; line-height:1.5; }
+  .pitch b { color:var(--amber); }
+  .badges { display:flex; gap:14px; justify-content:center; margin-top:26px; }
+  .badge {
+    font-size:13px; font-weight:800; letter-spacing:.22em; text-transform:uppercase;
+    padding:9px 20px; border-radius:999px; border:1px solid rgba(255,179,71,.5);
+    color:var(--amber); background:rgba(255,179,71,.08);
+    box-shadow: inset 0 0 14px rgba(255,179,71,.08), 0 0 14px rgba(255,179,71,.18);
+  }
+  .badge.red { border-color:rgba(226,59,59,.6); color:#FF9C99; background:rgba(226,59,59,.1); box-shadow:0 0 14px rgba(226,59,59,.18); }
+
+  /* ============ slide 2 : pillars ============ */
+  .pillars { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:14px; flex:1; align-content:start; }
+  .pillar { display:flex; flex-direction:column; gap:12px; padding:26px 24px; }
+  .pillar .icon { font-size:34px; line-height:1; }
+  .pillar h3 { font-size:22px; font-weight:900; text-transform:uppercase; letter-spacing:.04em; color:var(--amber); text-shadow:0 0 14px rgba(255,179,71,.4); }
+  .pillar p { font-size:15.5px; line-height:1.55; color:var(--cream); }
+  .pillar .so { margin-top:auto; font-size:13.5px; color:var(--ink-dim); border-top:1px dashed var(--line); padding-top:12px; }
+  .pillar .so b { color:var(--cream); }
+  .fantasy { margin-top:22px; font-size:17px; color:var(--ink-dim); text-align:center; }
+  .fantasy b { color:var(--amber); }
+
+  /* ============ slide 3 : core loop ============ */
+  .loopwrap { flex:1; display:grid; place-items:center; }
+
+  /* ============ slide 5 : space ============ */
+  .spacegrid { flex:1; display:grid; grid-template-columns:1fr 300px; gap:26px; align-items:center; }
+  .callouts { display:flex; flex-direction:column; gap:12px; }
+  .callouts .card { padding:14px 16px; }
+  .callouts h4 { font-size:12px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; color:var(--amber); margin-bottom:6px; }
+  .callouts p { font-size:14px; line-height:1.5; color:var(--cream); }
+  .callouts p .dim { font-size:13px; }
+
+  /* ============ slide 6 : key moment ============ */
+  .heroframe {
+    flex:1; display:grid; place-items:center; border-radius:16px; overflow:hidden;
+    border:1px solid rgba(255,179,71,.3); background:#0D0925;
+    box-shadow: 0 0 40px rgba(255,179,71,.1) inset;
+  }
+  .heroframe img { width:100%; height:100%; object-fit:cover; display:block; }
+  .caption { margin-top:16px; font-size:16.5px; text-align:center; color:var(--cream); }
+  .caption b { color:var(--amber); }
+
+  /* ============ slide 8 : art & audio ============ */
+  .artgrid { flex:1; display:grid; grid-template-columns:1.2fr 1fr; gap:28px; align-content:start; margin-top:6px; }
+  .swatches { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .swatch { border-radius:12px; overflow:hidden; border:1px solid var(--line); }
+  .swatch .chip { height:74px; }
+  .swatch .label { padding:9px 12px; background:rgba(10,7,32,.55); }
+  .swatch .label b { display:block; font-size:13px; letter-spacing:.04em; }
+  .swatch .label span { font-size:12px; color:var(--ink-dim); font-family:ui-monospace, Menlo, Consolas, monospace; }
+  .artnotes { margin-top:18px; font-size:14.5px; line-height:1.6; color:var(--cream); }
+  .artnotes b { color:var(--amber); }
+  .audiolist { display:flex; flex-direction:column; gap:12px; }
+  .audiolist .card { padding:14px 18px; display:flex; gap:14px; align-items:baseline; }
+  .audiolist .cue { font-weight:900; text-transform:uppercase; letter-spacing:.08em; color:var(--amber); font-size:15px; min-width:84px; }
+  .audiolist p { font-size:14.5px; color:var(--cream); line-height:1.45; }
+  .tag { display:inline-block; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; padding:2px 8px; border-radius:999px; margin-left:6px; }
+  .tag.mvp { background:rgba(255,179,71,.15); color:var(--amber); border:1px solid rgba(255,179,71,.4); }
+  .tag.str { background:rgba(199,205,212,.1); color:var(--silver); border:1px solid rgba(199,205,212,.35); }
+
+  /* ============ slide 9 : scope ============ */
+  .scopegrid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:6px; }
+  .scopecol h3 { font-size:16px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; margin-bottom:10px; }
+  .scopecol.mvp h3 { color:var(--amber); text-shadow:0 0 12px rgba(255,179,71,.4); }
+  .scopecol.tgt h3 { color:var(--cream); }
+  .scopecol.stx h3 { color:var(--silver); }
+  .scopecol ul { list-style:none; }
+  .scopecol li { font-size:13.5px; line-height:1.45; padding:5px 0 5px 18px; position:relative; color:var(--cream); border-bottom:1px dashed rgba(246,238,220,.08); }
+  .scopecol li::before { content:"✶"; position:absolute; left:0; color:var(--amber); font-size:11px; top:7px; }
+  .scopecol.stx li { color:var(--ink-dim); }
+  .scopecol.stx li::before { color:var(--silver); }
+  .criteria { margin-top:18px; }
+  .criteria td, .criteria th { padding:6px 10px; font-size:13px; }
+
+  /* ============ slide 10 : tech ============ */
+  .techgrid { flex:1; display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin-top:8px; align-content:start; }
+  .tech h4 { font-size:12.5px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; color:var(--amber); margin-bottom:10px; }
+  .tech ul { list-style:none; }
+  .tech li { font-size:14.5px; line-height:1.5; padding:4px 0 4px 20px; position:relative; }
+  .tech li::before { content:"▸"; position:absolute; left:2px; color:var(--amber); }
+  .tech li.off::before { content:"✕"; color:var(--red); }
+  .tech li.off { color:var(--ink-dim); }
+  .tech code { font-family:ui-monospace, Menlo, Consolas, monospace; font-size:13px; color:var(--amber-hi); background:rgba(255,179,71,.08); padding:1px 6px; border-radius:5px; }
+
+  /* svg shared text styling */
+  svg text { font-family:"Avenir Next","Segoe UI",system-ui,sans-serif; }
+</style>
+</head>
+<body>
+<div id="viewport">
+<div id="stage">
+
+  <!-- ============ 1 · TITLE ============ -->
+  <section class="slide s-title on">
+    <div class="bulbs"></div>
+    <div class="kicker">Step right up · An IWSDK showcase booth</div>
+    <h1 class="marquee">Tin <span class="amp">✶</span> Can <span class="amp">✶</span> Alley</h1>
+    <div class="stripe"></div>
+    <p class="pitch">A neon-lit carnival booth in VR: <b>grab</b> softballs — by hand or force-pull —
+    and <b>hurl</b> them at a pyramid of tin cans. Knock them tumbling to score, clear the shelf
+    before your balls run out, slap <b>RESET</b>, go again.</p>
+    <div class="badges">
+      <span class="badge">Immersive VR · Quest-class</span>
+      <span class="badge red">Browser-testable · mouse ray</span>
+      <span class="badge">~3-minute toy · ~30 s rounds</span>
+    </div>
+    <div class="bulbs bottom"></div>
+  </section>
+
+  <!-- ============ 2 · FANTASY & PILLARS ============ -->
+  <section class="slide">
+    <div class="kicker">02 · Fantasy &amp; Pillars</div>
+    <h2>You are the arm the carnival fears</h2>
+    <div class="stripe"></div>
+    <div class="pillars">
+      <div class="card pillar">
+        <div class="icon">⚡</div>
+        <h3>Ten seconds to fun</h3>
+        <p>No menus, no tutorial. A ball is in reach the moment the scene loads and the cans are begging for it.</p>
+        <div class="so"><b>So:</b> first throw possible before the player has read anything — the booth teaches itself.</div>
+      </div>
+      <div class="card pillar">
+        <div class="icon">🥫</div>
+        <h3>Physics is the toy</h3>
+        <p>Every point comes from real simulated tumbling — never scripted animations. A ball clipping a can edge still feels fair.</p>
+        <div class="so"><b>So:</b> no canned knockdowns; scoring reads the sim (off the shelf, or tipped past 45°).</div>
+      </div>
+      <div class="card pillar">
+        <div class="icon">🎪</div>
+        <h3>The booth is the UI</h3>
+        <p>Score lives on a panel over the booth; reset is a button you press. Nothing floats in your face.</p>
+        <div class="so"><b>So:</b> zero HUD — all state readable at a glance from where you stand and throw.</div>
+      </div>
+    </div>
+    <p class="fantasy">The fantasy: that <b>one perfect throw</b> at the county fair — wind-up, release, and six cans cartwheeling off the shelf.</p>
+  </section>
+
+  <!-- ============ 3 · CORE LOOP ============ -->
+  <section class="slide">
+    <div class="kicker">03 · Core Loop</div>
+    <h2>Grab → Throw → Tumble → Reset</h2>
+    <p class="sub">One round is 3 balls against a 6-can pyramid — roughly 30 seconds of chase-the-clear.</p>
+    <div class="loopwrap">
+      <svg viewBox="0 0 1120 400" width="1120" height="400" role="img" aria-label="Core loop diagram">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#FFB347"/>
+          </marker>
+          <linearGradient id="boxg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2E2268"/><stop offset="1" stop-color="#241B54"/>
+          </linearGradient>
+        </defs>
+        <!-- beat boxes -->
+        <g font-weight="900" text-anchor="middle">
+          <rect x="20"  y="110" width="220" height="120" rx="16" fill="url(#boxg)" stroke="#FFB347" stroke-opacity=".5" stroke-width="1.5"/>
+          <text x="130" y="158" fill="#F6EEDC" font-size="24" letter-spacing="2">1 · GRAB</text>
+          <text x="130" y="188" fill="rgba(246,238,220,.6)" font-size="14" font-weight="600">squeeze near · force-pull far</text>
+
+          <rect x="320" y="110" width="220" height="120" rx="16" fill="url(#boxg)" stroke="#FFB347" stroke-opacity=".5" stroke-width="1.5"/>
+          <text x="430" y="158" fill="#F6EEDC" font-size="24" letter-spacing="2">2 · THROW</text>
+          <text x="430" y="188" fill="rgba(246,238,220,.6)" font-size="14" font-weight="600">release velocity carries it</text>
+
+          <rect x="620" y="110" width="220" height="120" rx="16" fill="url(#boxg)" stroke="#E23B3B" stroke-opacity=".7" stroke-width="1.5"/>
+          <text x="730" y="150" fill="#F6EEDC" font-size="24" letter-spacing="2">3 · TUMBLE</text>
+          <text x="730" y="176" fill="#FFB347" font-size="16" letter-spacing="1" >&amp; SCORE</text>
+          <text x="730" y="200" fill="rgba(246,238,220,.6)" font-size="13.5" font-weight="600">clang per can down</text>
+
+          <rect x="920" y="110" width="180" height="120" rx="16" fill="#B3282C" stroke="#F6EEDC" stroke-opacity=".4" stroke-width="1.5"/>
+          <text x="1010" y="160" fill="#F6EEDC" font-size="24" letter-spacing="2">4 · RESET</text>
+          <text x="1010" y="188" fill="rgba(246,238,220,.75)" font-size="14" font-weight="600">press the button</text>
+        </g>
+        <!-- timings -->
+        <g text-anchor="middle" fill="#FFB347" font-size="14" font-weight="800" letter-spacing="2">
+          <text x="130"  y="262">~2 s</text>
+          <text x="430"  y="262">~1 s</text>
+          <text x="730"  y="262">~3–4 s</text>
+          <text x="1010" y="262">1 press</text>
+        </g>
+        <!-- forward arrows -->
+        <g stroke="#FFB347" stroke-width="3" fill="none" marker-end="url(#arr)">
+          <line x1="244" y1="170" x2="312" y2="170"/>
+          <line x1="544" y1="170" x2="612" y2="170"/>
+          <line x1="844" y1="170" x2="912" y2="170"/>
+        </g>
+        <!-- inner loop: score back to grab while balls remain -->
+        <path d="M 660 234 C 560 320, 300 320, 160 236" stroke="#FFB347" stroke-width="2.5" stroke-dasharray="7 6" fill="none" marker-end="url(#arr)"/>
+        <text x="410" y="318" text-anchor="middle" fill="rgba(246,238,220,.7)" font-size="14" font-weight="700">balls left? throw again (×3 per round)</text>
+        <!-- outer loop: reset back to grab -->
+        <path d="M 1010 238 C 1010 380, 130 380, 130 240" stroke="#E23B3B" stroke-width="2.5" fill="none" marker-end="url(#arr)"/>
+        <text x="570" y="368" text-anchor="middle" fill="#FF9C99" font-size="14" font-weight="700">pyramid cleared or balls out → RESET restacks · next round (~30 s total)</text>
+        <!-- gate label -->
+        <text x="878" y="150" text-anchor="middle" fill="rgba(246,238,220,.55)" font-size="12" font-weight="700">clear /</text>
+        <text x="878" y="166" text-anchor="middle" fill="rgba(246,238,220,.55)" font-size="12" font-weight="700">empty</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============ 4 · MECHANICS ============ -->
+  <section class="slide">
+    <div class="kicker">04 · Mechanics</div>
+    <h2>Six mechanics, one booth</h2>
+    <div class="stripe"></div>
+    <table>
+      <tr><th style="width:52px">#</th><th style="width:190px">Mechanic</th><th style="width:220px">Player verb / input</th><th>Response</th><th style="width:280px">Feedback</th></tr>
+      <tr><td class="num">M1</td><td><b>Near grab</b></td><td>Squeeze-grab, either hand</td><td>Ball follows the hand (one-hand grabbable)</td><td>Ball snaps to palm</td></tr>
+      <tr><td class="num">M2</td><td><b>Distance grab</b></td><td>Point ray + hold trigger</td><td>Force-pull from counter or floor</td><td>Ball flies to the hand</td></tr>
+      <tr><td class="num">M3</td><td><b>Throw</b></td><td>Release while swinging</td><td>Release velocity carries the ball — pure physics</td><td>Whoosh <span class="tag str">stretch</span></td></tr>
+      <tr><td class="num">M4</td><td><b>Can knockdown</b></td><td class="dim">(emergent)</td><td>Can is "down" when it leaves its shelf zone or tips past 45°</td><td>Clang + score ticks up</td></tr>
+      <tr><td class="num">M5</td><td><b>Round state</b></td><td class="dim">(system)</td><td>3 balls per round; ends on clear or empty</td><td>Panel: THROW! / CLEARED! / OUT OF BALLS</td></tr>
+      <tr><td class="num">M6</td><td><b>Reset round</b></td><td>Press the reset button</td><td>Pyramid restacks, balls return, round zeroes</td><td>Fresh pyramid, panel resets</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ 5 · THE SPACE ============ -->
+  <section class="slide">
+    <div class="kicker">05 · The Space</div>
+    <h2>One booth, 2.5 metres of throwing lane</h2>
+    <p class="sub">Standing, stationary — no locomotion. Simplified top-down sketch; the full annotated layout lives in <span style="color:var(--amber)">concept/layout.svg</span>.</p>
+    <div class="spacegrid">
+      <svg viewBox="0 0 560 400" width="100%" role="img" aria-label="Top-down layout sketch">
+        <defs>
+          <pattern id="booth-stripes" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect width="16" height="16" fill="#F6EEDC"/><rect width="8" height="16" fill="#E23B3B"/>
+          </pattern>
+          <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#FFB347"/>
+          </marker>
+          <marker id="arrDim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="rgba(246,238,220,.6)"/>
+          </marker>
+        </defs>
+        <!-- play space 4x4m : 1m = 82px, square 328px -->
+        <rect x="116" y="30" width="328" height="328" rx="8" fill="rgba(36,27,84,.5)" stroke="#F6EEDC" stroke-opacity=".45" stroke-dasharray="8 7" stroke-width="1.5"/>
+        <text x="280" y="382" text-anchor="middle" fill="rgba(246,238,220,.6)" font-size="13" font-weight="700" letter-spacing="2">4 × 4 m PLAY SPACE</text>
+
+        <!-- shelf (behind counter), 2m wide at z=-2.5-ish -->
+        <rect x="198" y="46" width="164" height="26" rx="4" fill="#2E2268" stroke="#C7CDD4" stroke-opacity=".6"/>
+        <text x="470" y="58" fill="#C7CDD4" font-size="12" font-weight="700">shelf · 2 m wide</text>
+        <text x="470" y="73" fill="rgba(246,238,220,.55)" font-size="11">@ 1.1 m high · M4</text>
+        <!-- cans: 3-2-1 pyramid footprint -->
+        <g fill="#C7CDD4" stroke="#E23B3B" stroke-width="2">
+          <circle cx="252" cy="59" r="8"/><circle cx="280" cy="59" r="8"/><circle cx="308" cy="59" r="8"/>
+        </g>
+        <text x="280" y="40" text-anchor="middle" fill="#C7CDD4" font-size="11" font-weight="700">6-can pyramid (3·2·1)</text>
+
+        <!-- score panel marker above shelf -->
+        <rect x="228" y="14" width="104" height="14" rx="4" fill="rgba(255,179,71,.18)" stroke="#FFB347" stroke-opacity=".8"/>
+        <text x="345" y="25" fill="#FFB347" font-size="11" font-weight="700">score panel + RESET (M6)</text>
+
+        <!-- counter, striped booth front -->
+        <rect x="188" y="86" width="184" height="22" rx="5" fill="url(#booth-stripes)" opacity=".92"/>
+        <text x="470" y="96" fill="#F6EEDC" font-size="12" font-weight="700">counter · 0.9 m high</text>
+        <!-- balls on counter -->
+        <g fill="#F6EEDC" stroke="#FFB347">
+          <circle cx="238" cy="97" r="6"/><circle cx="262" cy="97" r="6"/><circle cx="286" cy="97" r="6"/>
+        </g>
+        <text x="470" y="111" fill="rgba(246,238,220,.55)" font-size="11">3 softballs · M1 / M2</text>
+
+        <!-- player -->
+        <circle cx="280" cy="300" r="13" fill="#FFB347" opacity=".95"/>
+        <circle cx="280" cy="300" r="20" fill="none" stroke="#FFB347" stroke-opacity=".35" stroke-width="2"/>
+        <line x1="280" y1="284" x2="280" y2="252" stroke="#FFB347" stroke-width="3" marker-end="url(#arr2)"/>
+        <text x="280" y="334" text-anchor="middle" fill="#FFB347" font-size="12" font-weight="800" letter-spacing="1">PLAYER · standing</text>
+
+        <!-- distance dim: player to booth -->
+        <line x1="170" y1="300" x2="170" y2="112" stroke="rgba(246,238,220,.6)" stroke-width="1.5" marker-end="url(#arrDim)" marker-start="url(#arrDim)"/>
+        <text x="158" y="210" text-anchor="middle" fill="rgba(246,238,220,.75)" font-size="12" font-weight="700" transform="rotate(-90 158 210)">2.5 m</text>
+
+        <!-- scale bar -->
+        <line x1="116" y1="370" x2="198" y2="370" stroke="#F6EEDC" stroke-width="3"/>
+        <text x="157" y="362" text-anchor="middle" fill="rgba(246,238,220,.7)" font-size="11" font-weight="700">1 m</text>
+      </svg>
+      <div class="callouts">
+        <div class="card"><h4>Heights</h4><p>Counter 0.9 m · shelf 1.1 m · panel ≈1.9 m<br><span class="dim">Standing eye height ≈1.6 m — cans sit just below the sightline, panel just above.</span></p></div>
+        <div class="card"><h4>Zones</h4><p>Balls within arm's reach on the counter edge (M1); anything dropped is a force-pull away (M2).</p></div>
+        <div class="card"><h4>Floor</h4><p>Static physics plane — dropped balls rest, stray cans settle. <span class="dim">No locomotion → no collision-geometry prerequisite.</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6 · KEY MOMENT ============ -->
+  <section class="slide">
+    <div class="kicker">06 · Key Moment</div>
+    <h2>The last-ball clear</h2>
+    <div class="heroframe">
+      <div style="width:100%;max-height:100%;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Tin Can Alley key moment: player POV mid-throw at a neon carnival booth">
+  <title>Tin Can Alley — Key Moment (player POV, mid-throw)</title>
+  <defs>
+    <!-- palette: indigo night #1a1a3e / amber #ffb347 / booth red #d43d2a / cream #f5e9d0 / can silver -->
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#08081c"/>
+      <stop offset="0.45" stop-color="#1a1a3e"/>
+      <stop offset="1" stop-color="#33336b"/>
+    </linearGradient>
+    <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c1c44"/>
+      <stop offset="1" stop-color="#08081a"/>
+    </linearGradient>
+    <linearGradient id="awnRed" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e2543e"/>
+      <stop offset="1" stop-color="#b02f1f"/>
+    </linearGradient>
+    <linearGradient id="awnCream" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f8eed8"/>
+      <stop offset="1" stop-color="#e0cfa9"/>
+    </linearGradient>
+    <linearGradient id="canBody" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6f7583"/>
+      <stop offset="0.18" stop-color="#d9dee6"/>
+      <stop offset="0.42" stop-color="#f2f5f9"/>
+      <stop offset="0.75" stop-color="#9aa0ae"/>
+      <stop offset="1" stop-color="#5c6270"/>
+    </linearGradient>
+    <linearGradient id="woodGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5a3a28"/>
+      <stop offset="1" stop-color="#38231a"/>
+    </linearGradient>
+    <linearGradient id="handGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3a70"/>
+      <stop offset="1" stop-color="#15152f"/>
+    </linearGradient>
+    <radialGradient id="ballGrad" cx="0.36" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#fdf6e4"/>
+      <stop offset="0.55" stop-color="#f0e0bd"/>
+      <stop offset="1" stop-color="#c8b184"/>
+    </radialGradient>
+    <radialGradient id="bulbGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffd88a" stop-opacity="0.85"/>
+      <stop offset="0.5" stop-color="#ffb347" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#ffb347" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="panelGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffc76b" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffc76b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="poolGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffb347" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#ffb347" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vign" cx="0.5" cy="0.46" r="0.75">
+      <stop offset="0" stop-color="#050510" stop-opacity="0"/>
+      <stop offset="0.68" stop-color="#050510" stop-opacity="0"/>
+      <stop offset="1" stop-color="#050510" stop-opacity="0.62"/>
+    </radialGradient>
+    <clipPath id="awnClip">
+      <polygon points="500,152 1100,152 1136,252 464,252"/>
+    </clipPath>
+    <!-- tin can: 40 x 58, bottom edge at y=0 -->
+    <g id="can">
+      <rect x="-20" y="-56" width="40" height="54" rx="4" fill="url(#canBody)"/>
+      <rect x="-20" y="-38" width="40" height="13" fill="#c8402d"/>
+      <ellipse cx="0" cy="-56" rx="20" ry="6" fill="#dfe3ea"/>
+      <ellipse cx="0" cy="-56" rx="13.5" ry="3.8" fill="#a9afbb"/>
+      <path d="M -20 -56 A 20 6 0 0 1 20 -56" fill="none" stroke="#fff6df" stroke-width="1.6" opacity="0.8"/>
+    </g>
+  </defs>
+
+  <!-- LAYER 1: night sky -->
+  <rect x="0" y="0" width="1600" height="900" fill="url(#skyGrad)"/>
+  <g fill="#f5e9d0">
+    <circle cx="120" cy="90" r="2.2" opacity="0.8"/>
+    <circle cx="255" cy="180" r="1.4" opacity="0.5"/>
+    <circle cx="340" cy="60" r="1.8" opacity="0.7"/>
+    <circle cx="470" cy="130" r="1.2" opacity="0.4"/>
+    <circle cx="610" cy="55" r="1.6" opacity="0.6"/>
+    <circle cx="760" cy="105" r="1.2" opacity="0.45"/>
+    <circle cx="905" cy="45" r="2" opacity="0.75"/>
+    <circle cx="1030" cy="150" r="1.3" opacity="0.5"/>
+    <circle cx="1180" cy="70" r="1.7" opacity="0.65"/>
+    <circle cx="1320" cy="160" r="1.2" opacity="0.4"/>
+    <circle cx="1450" cy="95" r="2.2" opacity="0.8"/>
+    <circle cx="1545" cy="210" r="1.4" opacity="0.5"/>
+    <circle cx="185" cy="290" r="1.2" opacity="0.35"/>
+    <circle cx="1390" cy="300" r="1.3" opacity="0.35"/>
+  </g>
+
+  <!-- LAYER 2: far carnival silhouettes + fog -->
+  <g fill="#15153a" opacity="0.75">
+    <polygon points="0,620 0,560 90,522 180,560 180,620"/>
+    <polygon points="200,620 200,575 275,545 350,575 350,620"/>
+    <polygon points="1290,620 1290,565 1380,528 1470,565 1470,620"/>
+    <polygon points="1480,620 1480,580 1600,552 1600,620"/>
+  </g>
+  <polygon points="90,522 84,500 104,508" fill="#d43d2a" opacity="0.7"/>
+  <polygon points="1380,528 1374,506 1394,514" fill="#d43d2a" opacity="0.7"/>
+  <rect x="0" y="575" width="1600" height="55" fill="#33336b" opacity="0.22"/>
+
+  <!-- LAYER 3: ground + light pool -->
+  <rect x="0" y="618" width="1600" height="282" fill="url(#groundGrad)"/>
+  <ellipse cx="800" cy="665" rx="440" ry="72" fill="url(#poolGlow)"/>
+
+  <!-- LAYER 4: string lights overhead -->
+  <g>
+    <path d="M -20 40 Q 500 118 1020 58 Q 1310 28 1620 88" fill="none" stroke="#3a3a6a" stroke-width="3"/>
+    <path d="M -20 92 Q 400 232 820 122 Q 1200 32 1620 142" fill="none" stroke="#3a3a6a" stroke-width="4"/>
+    <g>
+      <circle cx="180" cy="140" r="22" fill="url(#bulbGlow)"/><circle cx="180" cy="140" r="7" fill="#ffd88a"/>
+      <circle cx="400" cy="192" r="24" fill="url(#bulbGlow)"/><circle cx="400" cy="192" r="8" fill="#ffd88a"/>
+      <circle cx="620" cy="180" r="22" fill="url(#bulbGlow)"/><circle cx="620" cy="180" r="7" fill="#ffd88a"/>
+      <circle cx="960" cy="86" r="22" fill="url(#bulbGlow)"/><circle cx="960" cy="86" r="7" fill="#ffd88a"/>
+      <circle cx="1210" cy="62" r="24" fill="url(#bulbGlow)"/><circle cx="1210" cy="62" r="8" fill="#ffd88a"/>
+      <circle cx="1450" cy="106" r="22" fill="url(#bulbGlow)"/><circle cx="1450" cy="106" r="7" fill="#ffd88a"/>
+      <circle cx="300" cy="98" r="16" fill="url(#bulbGlow)"/><circle cx="300" cy="98" r="5" fill="#f0c169"/>
+      <circle cx="700" cy="92" r="16" fill="url(#bulbGlow)"/><circle cx="700" cy="92" r="5" fill="#f0c169"/>
+      <circle cx="1120" cy="46" r="16" fill="url(#bulbGlow)"/><circle cx="1120" cy="46" r="5" fill="#f0c169"/>
+    </g>
+  </g>
+
+  <!-- LAYER 5: the booth -->
+  <ellipse cx="800" cy="626" rx="350" ry="18" fill="#000000" opacity="0.4"/>
+  <rect x="500" y="250" width="600" height="312" fill="#0d0d22"/>
+  <ellipse cx="800" cy="430" rx="270" ry="140" fill="url(#panelGlow)" opacity="0.28"/>
+  <rect x="460" y="248" width="40" height="374" fill="url(#awnRed)"/>
+  <rect x="1100" y="248" width="40" height="374" fill="url(#awnRed)"/>
+  <rect x="460" y="596" width="40" height="12" fill="#e0cfa9"/>
+  <rect x="1100" y="596" width="40" height="12" fill="#e0cfa9"/>
+
+  <!-- shelf + cans: 3-2-1 pyramid, top can mid-tumble -->
+  <rect x="570" y="468" width="460" height="16" fill="url(#woodGrad)"/>
+  <line x1="570" y1="468" x2="1030" y2="468" stroke="#ffcf7a" stroke-width="2" opacity="0.45"/>
+  <ellipse cx="800" cy="469" rx="130" ry="7" fill="#000000" opacity="0.35"/>
+  <use href="#can" transform="translate(752,468)"/>
+  <use href="#can" transform="translate(800,468)"/>
+  <use href="#can" transform="translate(848,468)"/>
+  <use href="#can" transform="translate(776,412)"/>
+  <use href="#can" transform="translate(824,412)"/>
+  <use href="#can" transform="translate(936,398) rotate(56)"/>
+  <path d="M 872 336 Q 912 320 944 340" fill="none" stroke="#f5e9d0" stroke-width="3" opacity="0.5"/>
+  <path d="M 860 358 Q 904 338 940 360" fill="none" stroke="#f5e9d0" stroke-width="2.5" opacity="0.3"/>
+  <circle cx="890" cy="386" r="3" fill="#ffb347" opacity="0.85"/>
+  <circle cx="912" cy="366" r="2.2" fill="#ffd88a" opacity="0.7"/>
+  <path d="M 1120 480 Q 1000 330 930 372" fill="none" stroke="#ffd88a" stroke-width="3" stroke-dasharray="5 12" opacity="0.3"/>
+
+  <!-- glowing score panel -->
+  <line x1="700" y1="252" x2="700" y2="276" stroke="#3a3a6a" stroke-width="3"/>
+  <line x1="900" y1="252" x2="900" y2="276" stroke="#3a3a6a" stroke-width="3"/>
+  <ellipse cx="800" cy="322" rx="255" ry="98" fill="url(#panelGlow)"/>
+  <rect x="640" y="276" width="320" height="92" rx="14" fill="#0d0d24" stroke="#ffb347" stroke-width="3"/>
+  <rect x="650" y="286" width="300" height="72" rx="9" fill="none" stroke="#f5e9d0" stroke-width="1.2" opacity="0.25"/>
+  <text x="800" y="320" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="36" letter-spacing="3" fill="#f5e9d0">SCORE 20</text>
+  <circle cx="722" cy="344" r="8" fill="#f5e9d0"/>
+  <circle cx="752" cy="344" r="8" fill="#f5e9d0"/>
+  <circle cx="782" cy="344" r="8" fill="none" stroke="#f5e9d0" stroke-width="2" opacity="0.6"/>
+  <text x="880" y="352" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="24" letter-spacing="2" fill="#ffb347">THROW!</text>
+
+  <!-- counter with waiting balls -->
+  <ellipse cx="620" cy="541" rx="22" ry="5" fill="#000000" opacity="0.4"/>
+  <ellipse cx="668" cy="543" rx="20" ry="5" fill="#000000" opacity="0.4"/>
+  <circle cx="620" cy="523" r="17" fill="url(#ballGrad)"/>
+  <circle cx="668" cy="525" r="16" fill="url(#ballGrad)"/>
+  <rect x="520" y="540" width="560" height="16" fill="url(#awnCream)"/>
+  <rect x="520" y="556" width="560" height="64" rx="4" fill="url(#awnRed)"/>
+  <line x1="530" y1="610" x2="1070" y2="610" stroke="#f5e9d0" stroke-width="3" opacity="0.5"/>
+
+  <!-- LAYER 6: striped awning with scalloped fringe -->
+  <g clip-path="url(#awnClip)">
+    <rect x="464" y="152" width="672" height="100" fill="url(#awnCream)"/>
+    <rect x="525" y="152" width="61" height="100" fill="url(#awnRed)"/>
+    <rect x="647" y="152" width="61" height="100" fill="url(#awnRed)"/>
+    <rect x="769" y="152" width="61" height="100" fill="url(#awnRed)"/>
+    <rect x="891" y="152" width="61" height="100" fill="url(#awnRed)"/>
+    <rect x="1013" y="152" width="61" height="100" fill="url(#awnRed)"/>
+  </g>
+  <rect x="492" y="142" width="616" height="12" rx="6" fill="url(#woodGrad)"/>
+  <g>
+    <circle cx="486" cy="252" r="22" fill="url(#awnRed)"/>
+    <circle cx="543" cy="252" r="22" fill="url(#awnCream)"/>
+    <circle cx="600" cy="252" r="22" fill="url(#awnRed)"/>
+    <circle cx="657" cy="252" r="22" fill="url(#awnCream)"/>
+    <circle cx="714" cy="252" r="22" fill="url(#awnRed)"/>
+    <circle cx="771" cy="252" r="22" fill="url(#awnCream)"/>
+    <circle cx="828" cy="252" r="22" fill="url(#awnRed)"/>
+    <circle cx="885" cy="252" r="22" fill="url(#awnCream)"/>
+    <circle cx="942" cy="252" r="22" fill="url(#awnRed)"/>
+    <circle cx="999" cy="252" r="22" fill="url(#awnCream)"/>
+    <circle cx="1056" cy="252" r="22" fill="url(#awnRed)"/>
+    <circle cx="1113" cy="252" r="22" fill="url(#awnCream)"/>
+  </g>
+
+  <!-- LAYER 7: foreground — right hand mid-throw with cream softball -->
+  <g transform="translate(58,6)">
+  <path d="M 1590 700 Q 1430 688 1292 588" fill="none" stroke="#f5e9d0" stroke-width="7" opacity="0.26" stroke-linecap="round"/>
+  <path d="M 1600 594 Q 1480 588 1338 516" fill="none" stroke="#f5e9d0" stroke-width="5" opacity="0.16" stroke-linecap="round"/>
+  <path d="M 1318 690 Q 1270 612 1254 540" fill="none" stroke="#ffb347" stroke-width="4" opacity="0.3" stroke-linecap="round"/>
+  <polygon points="1350,940 1516,940 1334,706 1214,738" fill="url(#handGrad)"/>
+  <line x1="1222" y1="734" x2="1330" y2="710" stroke="#ffb347" stroke-width="4" opacity="0.5" stroke-linecap="round"/>
+  <ellipse cx="1256" cy="652" rx="72" ry="64" fill="url(#handGrad)" transform="rotate(-28 1256 652)"/>
+  <circle cx="1170" cy="545" r="82" fill="url(#ballGrad)"/>
+  <path d="M 1104 508 Q 1168 545 1128 616" fill="none" stroke="#d4a86a" stroke-width="3.5" opacity="0.85"/>
+  <path d="M 1226 486 Q 1196 560 1240 612" fill="none" stroke="#d4a86a" stroke-width="3.5" opacity="0.85"/>
+  <ellipse cx="1140" cy="502" rx="30" ry="19" fill="#fffaf0" opacity="0.75" transform="rotate(-24 1140 502)"/>
+  <ellipse cx="1234" cy="498" rx="15" ry="30" fill="#44447e" transform="rotate(40 1234 498)"/>
+  <ellipse cx="1256" cy="584" rx="17" ry="36" fill="#44447e" transform="rotate(52 1256 584)"/>
+  <ellipse cx="1236" cy="620" rx="16" ry="34" fill="#3c3c72" transform="rotate(64 1236 620)"/>
+  <ellipse cx="1204" cy="642" rx="15" ry="30" fill="#343466" transform="rotate(78 1204 642)"/>
+  <path d="M 1214 480 Q 1236 466 1252 486" fill="none" stroke="#ffb347" stroke-width="4" opacity="0.85" stroke-linecap="round"/>
+  <path d="M 1268 556 Q 1286 592 1274 628" fill="none" stroke="#ffb347" stroke-width="3.5" opacity="0.6" stroke-linecap="round"/>
+  <path d="M 1244 606 Q 1256 632 1246 654" fill="none" stroke="#ffb347" stroke-width="3" opacity="0.45" stroke-linecap="round"/>
+  <path d="M 1206 630 Q 1218 652 1208 670" fill="none" stroke="#ffb347" stroke-width="2.5" opacity="0.35" stroke-linecap="round"/>
+  <path d="M 1200 692 Q 1252 712 1304 694" fill="none" stroke="#ffb347" stroke-width="3" opacity="0.3" stroke-linecap="round"/>
+  </g>
+
+  <!-- LAYER 8: vignette -->
+  <rect x="0" y="0" width="1600" height="900" fill="url(#vign)"/>
+</svg>
+</div>
+    </div>
+    <p class="caption">Your <b>last ball</b> catches the pyramid low and square — cans cartwheel off the shelf in a shower of clangs,
+    the panel flips to <b>CLEARED!</b>, and your hand is already reaching for the reset button. Earned, not scripted: the physics did it.</p>
+  </section>
+
+  <!-- ============ 7 · INTERACTION MODEL ============ -->
+  <section class="slide">
+    <div class="kicker">07 · Interaction Model</div>
+    <h2>Same booth, two ways in</h2>
+    <p class="sub">Dual runtime: Immersive VR is the real experience; the desktop browser build exists so the loop is testable (and demoable) without a headset.</p>
+    <table>
+      <tr><th style="width:200px">Action</th><th>VR — Quest-class controllers</th><th>Desktop browser — mouse ray</th></tr>
+      <tr><td class="num">Grab (near) · M1</td><td>Reach + squeeze grip, either hand</td><td>Click the ball (pointer ray via <span class="dim">canvasPointerEvents</span>)</td></tr>
+      <tr><td class="num">Grab (far) · M2</td><td>Point ray at ball + hold trigger → force-pull</td><td>Click a distant ball → pulled to cursor</td></tr>
+      <tr><td class="num">Aim</td><td>Look + arm — natural body aiming</td><td>Mouse-look; drag to line up</td></tr>
+      <tr><td class="num">Throw · M3</td><td>Swing and release grip — release velocity carries it</td><td>Drag and release — flick velocity maps to throw</td></tr>
+      <tr><td class="num">Reset · M6</td><td>Ray-click or poke the panel button</td><td>Click the panel button</td></tr>
+      <tr><td class="num">Locomotion</td><td class="dim" colspan="2">None — standing, stationary booth. Comfort-safe by construction; nothing to mitigate.</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ 8 · ART & AUDIO ============ -->
+  <section class="slide">
+    <div class="kicker">08 · Art &amp; Audio Direction</div>
+    <h2>Neon carnival night</h2>
+    <p class="sub">All geometry is code-built primitives — boxes, cylinders, spheres — zero asset-sourcing risk. The palette does the heavy lifting.</p>
+    <div class="artgrid">
+      <div>
+        <div class="swatches">
+          <div class="swatch"><div class="chip" style="background:#120C2E"></div><div class="label"><b>Midnight Indigo</b><span>#120C2E · dome sky</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#241B54"></div><div class="label"><b>Booth Indigo</b><span>#241B54 · shadows, structure</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#FFB347; box-shadow:0 0 18px rgba(255,179,71,.7) inset"></div><div class="label"><b>String-Light Amber</b><span>#FFB347 · IBL warmth, glow</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#E23B3B"></div><div class="label"><b>Carnival Red</b><span>#E23B3B · stripes, can bands</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#F6EEDC"></div><div class="label"><b>Canvas Cream</b><span>#F6EEDC · stripes, softballs</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#C7CDD4"></div><div class="label"><b>Tin Silver</b><span>#C7CDD4 · the cans</span></div></div>
+        </div>
+        <p class="artnotes"><b>Materials:</b> deep indigo dome-gradient sky with warm amber IBL accents;
+        booth in red-and-cream stripes; cans in tin silver with a carnival-red band; softballs in cream.
+        <b>Target polish:</b> emissive string-light strips along the booth eaves.</p>
+      </div>
+      <div class="audiolist">
+        <div class="card"><span class="cue">Hit</span><p>Clang when a can goes down — starter <span class="dim">chime.mp3</span> pitched low <span class="tag mvp">MVP</span></p></div>
+        <div class="card"><span class="cue">Clear</span><p>Celebratory sting on pyramid clear — chime reuse, overlap mode <span class="tag mvp">MVP</span></p></div>
+        <div class="card"><span class="cue">Throw</span><p>Soft whoosh on release — needs a sourced asset <span class="tag str">stretch</span></p></div>
+        <div class="card"><span class="cue">Ambient</span><p>No ambient loop in MVP — the clangs carry the soundscape <span class="tag str">later</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 9 · SCOPE ============ -->
+  <section class="slide">
+    <div class="kicker">09 · Scope &amp; Success</div>
+    <h2>Small booth, sharp edges</h2>
+    <div class="scopegrid">
+      <div class="card scopecol mvp">
+        <h3>MVP</h3>
+        <ul>
+          <li>M1–M6, one booth</li>
+          <li>6-can pyramid (3·2·1), 3 balls/round</li>
+          <li>Score panel + reset button</li>
+          <li>Dome / IBL neon-night theming</li>
+          <li>Hit + clear audio (chime)</li>
+        </ul>
+      </div>
+      <div class="card scopecol tgt">
+        <h3>Target</h3>
+        <ul>
+          <li>Throw whoosh SFX</li>
+          <li>Can-hit particle flash</li>
+          <li>Best-score memory (in-session)</li>
+          <li>Emissive booth string-lights</li>
+        </ul>
+      </div>
+      <div class="card scopecol stx">
+        <h3>Stretch · non-goals</h3>
+        <ul>
+          <li>Locomotion between booths</li>
+          <li>Leaderboards / persistence</li>
+          <li>Haptics, hand-tracking throw tuning</li>
+          <li>Multiplayer</li>
+        </ul>
+      </div>
+    </div>
+    <div class="criteria">
+      <table>
+        <tr><th style="width:44px">#</th><th>Success criterion (observable)</th><th style="width:400px">Checked by</th></tr>
+        <tr><td class="num">S1</td><td>Scene renders, XR session enters, console clean</td><td class="dim">screenshot non-black · xr enter · no log errors</td></tr>
+        <tr><td class="num">S2</td><td>Ball distance-grabs: ray + trigger pulls it to hand</td><td class="dim">ecs diff — ball Transform moves toward controller</td></tr>
+        <tr><td class="num">S3</td><td>A thrown ball knocks at least one can over</td><td class="dim">ecs diff — can pose past threshold after throw</td></tr>
+        <tr><td class="num">S4</td><td>Score increments within 1 s of a can going down</td><td class="dim">log <code style="color:var(--amber-hi)">[GAME] score=</code> · panel bound to signal</td></tr>
+        <tr><td class="num">S5</td><td>Reset restores pyramid and ball count</td><td class="dim">cans within ε of initial transforms · round=reset log</td></tr>
+        <tr><td class="num">S6</td><td>Hit audio fires on can knockdown</td><td class="dim">log <code style="color:var(--amber-hi)">[GAME] sfx=hit</code> at play call site</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ 10 · TECH SNAPSHOT ============ -->
+  <section class="slide">
+    <div class="kicker">10 · Tech Snapshot</div>
+    <h2>One booth, whole SDK tour</h2>
+    <p class="sub">Physics, grabbing, spatial UI, audio, and environment theming — exercised in a single scene. Refined in Phase 3.</p>
+    <div class="techgrid">
+      <div class="card tech">
+        <h4>Session &amp; runtime</h4>
+        <ul>
+          <li>Dual runtime: ImmersiveVR primary — <code>offer: 'once'</code></li>
+          <li>Browser-testable via <code>canvasPointerEvents</code> + mouse ray</li>
+          <li>Quest-class headset target; desktop browser for dev / CI</li>
+        </ul>
+      </div>
+      <div class="card tech">
+        <h4>Features enabled</h4>
+        <ul>
+          <li>Physics — rigid bodies, static floor plane</li>
+          <li>Grabbing — one-hand near grab + distance force-pull</li>
+          <li>Spatial UI — <code>PanelUI</code> score panel, interactable reset</li>
+          <li>Audio + dome / IBL environment theming</li>
+          <li class="off">Locomotion — none (stationary booth, comfort-safe)</li>
+        </ul>
+      </div>
+      <div class="card tech">
+        <h4>Custom systems expected</h4>
+        <ul>
+          <li><b>ThrowSystem</b> — release-velocity handoff on grip release</li>
+          <li><b>ScoringSystem</b> — shelf-zone exit / tipped-past-45° rule</li>
+          <li><b>RoundSystem</b> — 3-ball budget, clear/empty detection, reset</li>
+        </ul>
+      </div>
+      <div class="card tech">
+        <h4>Assets &amp; risk</h4>
+        <ul>
+          <li>Geometry: 100% code-built primitives — zero sourcing risk</li>
+          <li>Audio: guaranteed-present starter <code>chime.mp3</code> (hit, clear)</li>
+          <li>Stretch-only dependency: a sourced whoosh SFX</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div id="hint">← → / click to navigate</div>
+  <div id="counter">1 / 10</div>
+</div>
+</div>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var counter = document.getElementById('counter');
+  var stage = document.getElementById('stage');
+  var i = 0;
+
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function (s, k) { s.classList.toggle('on', k === i); });
+    counter.textContent = (i + 1) + ' / ' + slides.length;
+    if (history.replaceState) history.replaceState(null, '', '#' + (i + 1));
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { show(i + 1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { show(i - 1); e.preventDefault(); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length - 1);
+  });
+
+  stage.addEventListener('click', function (e) {
+    var r = stage.getBoundingClientRect();
+    (e.clientX - r.left < r.width * 0.25) ? show(i - 1) : show(i + 1);
+  });
+
+  function fit() {
+    var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    stage.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  var h = parseInt((location.hash || '').slice(1), 10);
+  show(isNaN(h) ? 0 : h - 1);
+})();
+</script>
+</body>
+</html>

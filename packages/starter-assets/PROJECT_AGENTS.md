@@ -261,11 +261,12 @@ root.addComponent(DomeGradient, { sky: [0.2, 0.6, 0.8, 1.0] });
 #### DON'T forget `_needsUpdate` after changing environment properties
 
 ```typescript
-// ❌ BAD - Changes are silently ignored
+// ❌ BAD - Changes are silently ignored (and setValue THROWS on vector
+// fields in elics 3.4.x — use getVectorView for Vec2/Vec3/Vec4/Color)
 root.setValue(DomeGradient, 'sky', [0.1, 0.2, 0.8, 1.0]);
 
-// ✅ GOOD - Set _needsUpdate to apply changes
-root.setValue(DomeGradient, 'sky', [0.1, 0.2, 0.8, 1.0]);
+// ✅ GOOD - vector write via getVectorView, then _needsUpdate (scalar)
+root.getVectorView(DomeGradient, 'sky').set([0.1, 0.2, 0.8, 1.0]);
 root.setValue(DomeGradient, '_needsUpdate', true);
 ```
 
@@ -290,6 +291,16 @@ entity.addComponent(ScreenSpace, { width: '400px', top: '20px' });
 ```
 
 ---
+
+## Planning Pipeline
+
+If `.claude/skills/iwsdk-planner/SKILL.md` exists in this project, read it
+before planning any new experience or multi-system feature — it defines a
+phased ideation → design → grounding → architecture → build → verify → ship
+pipeline with per-phase artifacts under `design/`, and it is written to work
+without any vendor-specific tools (every step has an inline fallback). Its
+`references/api-reference.md` is the API ground truth to load when writing
+or reviewing IWSDK code.
 
 ## MCP Tools Available
 
@@ -498,9 +509,10 @@ Types.Float64; // 64-bit float
 Types.Int8; // 8-bit integer
 Types.Int16; // 16-bit integer
 Types.Int32; // 32-bit integer
-Types.Uint32; // 32-bit unsigned
 Types.Boolean; // true/false
 Types.String; // text
+Types.FilePath; // file path string
+Types.Vec2; // [x, y]
 Types.Vec3; // [x, y, z]
 Types.Vec4; // [x, y, z, w]
 Types.Color; // [r, g, b, a] - RGBA!
