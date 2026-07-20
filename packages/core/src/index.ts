@@ -14,6 +14,7 @@ export * from './ecs/index.js';
 export * from './transform/index.js';
 export * from './asset/index.js';
 export * from './locomotion/index.js';
+export * from './particles/index.js';
 export * from './visibility/index.js';
 export * from './ui/index.js';
 export * from './init/index.js';

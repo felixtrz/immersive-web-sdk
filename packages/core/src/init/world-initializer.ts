@@ -47,6 +47,7 @@ import {
   TurningMethod,
 } from '../locomotion/index.js';
 import { MCPRuntime } from '../mcp/index.js';
+import { ParticleEmitter, ParticleSystem } from '../particles/index.js';
 // The physics module pulls in `@babylonjs/havok` (~2 MB WASM + engine JS) at
 // the static-graph level. Load it lazily in `registerFeatureSystems` only
 // when `features.physics` is enabled so non-physics projects don't pay the
@@ -164,6 +165,8 @@ export type WorldOptions = {
     environmentRaycast?: boolean;
     /** Camera access for video streaming. @defaultValue false */
     camera?: boolean;
+    /** Particle effects (ParticleSystem/ParticleEmitter). @defaultValue false */
+    particles?: boolean;
     /** Spatial UI systems (PanelUI/ScreenSpace/Follow). Boolean or config. @defaultValue true */
     spatialUI?:
       | boolean
@@ -323,6 +326,7 @@ function extractConfiguration(options: WorldOptions) {
       sceneUnderstanding: options.features?.sceneUnderstanding ?? false,
       environmentRaycast: options.features?.environmentRaycast ?? false,
       camera: options.features?.camera ?? false,
+      particles: options.features?.particles ?? false,
       spatialUI: options.features?.spatialUI ?? true,
     },
   } as const;
@@ -620,6 +624,7 @@ async function registerFeatureSystems(
   const sceneUnderstandingEnabled = !!sceneUnderstanding;
   const environmentRaycastEnabled = !!config.features.environmentRaycast;
   const cameraEnabled = !!config.features.camera;
+  const particlesEnabled = !!config.features.particles;
 
   const spatialUI = config.features.spatialUI as
     | boolean
@@ -718,6 +723,10 @@ async function registerFeatureSystems(
   // Camera system for video streaming
   if (cameraEnabled) {
     world.registerComponent(CameraSource).registerSystem(CameraSystem);
+  }
+
+  if (particlesEnabled) {
+    world.registerComponent(ParticleEmitter).registerSystem(ParticleSystem);
   }
 
   // WebXR composition layers (quad/cylinder)
